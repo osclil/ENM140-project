@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include "board.h"
 
@@ -14,7 +15,7 @@ void test_board(std::uint32_t width, std::uint32_t height, const std::string &fe
 	for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
-			std::cout << b.at(i, j) << ' ';
+			std::cout << static_cast<std::uint32_t>(std::to_underlying(b.at(i, j))) << ' ';
 		std::cout << std::endl;
 	}
 
@@ -36,6 +37,8 @@ int main()
 	test_board(8, 8, FEN_START);
 	test_board(8, 8, FEN_DANISH);
 	test_board(8, 8, FEN_GRUENFELD);
-	
+
+	std::cout << (piece::e_BLACK_PAWN == piece::e_BLACK_PAWN) << std::endl;
+
 	return 0;
 }

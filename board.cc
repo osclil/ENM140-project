@@ -14,54 +14,54 @@ std::string board::to_fen() const
 	{
 		for (std::size_t j = 0; j < m_width; j++)
 		{
-			std::size_t zero_cnt = 0;
-			while (j < m_width && m_board[i * m_width + j] == 0)
+			std::size_t empty_cnt = 0;
+			while (j < m_width && m_board[i * m_width + j] == piece::e_EMPTY)
 			{
-				zero_cnt++;
+				empty_cnt++;
 				j++;
 			}
-			if (zero_cnt > 0)
-				stream << zero_cnt;
+			if (empty_cnt > 0)
+				stream << empty_cnt;
 			if (j == m_width)
 				break;
 			/* Could be done with significantly less code */
 			/* Might consider doing that later */
 			switch (m_board[i * m_width + j])
 			{
-				case 1:
+				case piece::e_BLACK_PAWN:
 					stream << 'p';
 					break;
-				case 2:
+				case piece::e_BLACK_KNIGHT:
 					stream << 'n';
 					break;
-				case 3:
+				case piece::e_BLACK_BISHOP:
 					stream << 'b';
 					break;
-				case 4:
+				case piece::e_BLACK_ROOK:
 					stream << 'r';
 					break;
-				case 5:
+				case piece::e_BLACK_QUEEN:
 					stream << 'q';
 					break;
-				case 6: 
+				case piece::e_BLACK_KING: 
 					stream << 'k';
 					break;
-				case (1 << 3) | 1:
+				case piece::e_WHITE_PAWN:
 					stream << 'P';
 					break;
-				case (1 << 3) | 2:
+				case piece::e_WHITE_KNIGHT:
 					stream << 'N';
 					break;
-				case (1 << 3) | 3:
+				case piece::e_WHITE_BISHOP:
 					stream << 'B';
 					break;
-				case (1 << 3) | 4:
+				case piece::e_WHITE_ROOK:
 					stream << 'R';
 					break;
-				case (1 << 3) | 5:
+				case piece::e_WHITE_QUEEN:
 					stream << 'Q';
 					break;
-				case (1 << 3) | 6:
+				case piece::e_WHITE_KING:
 					stream << 'K';
 					break;
 				/* TODO, check error */
@@ -89,7 +89,7 @@ void board::load_fen(const std::string &FEN)
 			std::fill(
       				m_board.get() + current_index,
       				m_board.get() + current_index + length,
-				0
+				piece::e_EMPTY
 			);
 			current_index += length;
 			continue;
@@ -101,40 +101,40 @@ void board::load_fen(const std::string &FEN)
 			case '/':
 				break;
 			case 'p':
-				m_board[current_index++] = 1;
+				m_board[current_index++] = piece::e_BLACK_PAWN;
 				break;
 			case 'n':
-				m_board[current_index++] = 2;
+				m_board[current_index++] = piece::e_BLACK_KNIGHT;
 				break;
 			case 'b':
-				m_board[current_index++] = 3;
+				m_board[current_index++] = piece::e_BLACK_BISHOP;
 				break;
 			case 'r':
-				m_board[current_index++] = 4;
+				m_board[current_index++] = piece::e_BLACK_ROOK;
 				break;
 			case 'q':
-				m_board[current_index++] = 5;
+				m_board[current_index++] = piece::e_BLACK_QUEEN;
 				break;
 			case 'k':
-				m_board[current_index++] = 6;
+				m_board[current_index++] = piece::e_BLACK_KING;
 				break;
 			case 'P':
-				m_board[current_index++] = (1 << 3) | 1;
+				m_board[current_index++] = piece::e_WHITE_PAWN;
 				break;
 			case 'N':
-				m_board[current_index++] = (1 << 3) | 2;
+				m_board[current_index++] = piece::e_WHITE_KNIGHT;
 				break;
 			case 'B':
-				m_board[current_index++] = (1 << 3) | 3;
+				m_board[current_index++] = piece::e_WHITE_BISHOP;
 				break;
 			case 'R':
-				m_board[current_index++] = (1 << 3) | 4;
+				m_board[current_index++] = piece::e_WHITE_ROOK;
 				break;
 			case 'Q':
-				m_board[current_index++] = (1 << 3) | 5;
+				m_board[current_index++] = piece::e_WHITE_QUEEN;
 				break;
 			case 'K':
-				m_board[current_index++] = (1 << 3) | 6;
+				m_board[current_index++] = piece::e_WHITE_KING;
 				break;
 			/* TODO, check error */
 			default:
