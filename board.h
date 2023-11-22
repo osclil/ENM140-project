@@ -13,6 +13,7 @@ class board
 {
 public:
 
+	/* Should be able to deduce width and height from fen */
 	board(std::uint8_t width, std::uint8_t height, const std::string &FEN) :
 		m_width(width),
 		m_height(height),
@@ -27,8 +28,14 @@ public:
 
 	std::string to_fen() const;
 
+	static board from_fen(const std::string &);
+
 	/* Performs no check at the moment */
 	piece at(std::uint8_t row, std::uint8_t col) const { return m_board[row * m_width + col]; }
+	piece& at(std::uint8_t row, std::uint8_t col) { return m_board[row * m_width + col]; }
+
+	std::uint8_t get_width() const noexcept { return m_width; }
+	std::uint8_t get_height() const noexcept { return m_height; }
 
 private:
 

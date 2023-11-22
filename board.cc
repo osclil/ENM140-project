@@ -6,6 +6,35 @@
 
 #include "board.h"
 
+/* Deduce width and height from the FEN and returns a board object */
+board board::from_fen(const std::string &FEN)
+{
+	std::uint8_t width = 0;
+	std::uint8_t height = 1;
+
+	bool first_row = true;
+
+	for (const char c : FEN)
+	{
+		if (c == '/')
+		{
+			height++;
+			first_row = false;
+			continue;
+		}
+		
+		if (first_row)
+		{
+			if (std::isdigit(c))
+				width += static_cast<std::uint8_t>(c - '0');
+			else
+      				width++;
+		}
+	}
+
+	return { width, height, FEN };
+}
+
 std::string board::to_fen() const
 {
 	std::stringstream stream{};
