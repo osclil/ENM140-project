@@ -2,12 +2,79 @@
 
 #include <cctype>
 #include <algorithm>
+#include <sstream>
 
 #include "board.h"
 
 std::string board::to_fen() const
 {
-	return ""; /* TODO */
+	std::stringstream stream{};
+
+	for (std::size_t i = 0; i < m_height; i++)
+	{
+		for (std::size_t j = 0; j < m_width; j++)
+		{
+			std::size_t zero_cnt = 0;
+			while (j < m_width && m_board[i * m_width + j] == 0)
+			{
+				zero_cnt++;
+				j++;
+			}
+			if (zero_cnt > 0)
+				stream << zero_cnt;
+			if (j == m_width)
+				break;
+			/* Could be done with significantly less code */
+			/* Might consider doing that later */
+			switch (m_board[i * m_width + j])
+			{
+				case 1:
+					stream << 'p';
+					break;
+				case 2:
+					stream << 'n';
+					break;
+				case 3:
+					stream << 'b';
+					break;
+				case 4:
+					stream << 'r';
+					break;
+				case 5:
+					stream << 'q';
+					break;
+				case 6: 
+					stream << 'k';
+					break;
+				case (1 << 3) | 1:
+					stream << 'P';
+					break;
+				case (1 << 3) | 2:
+					stream << 'N';
+					break;
+				case (1 << 3) | 3:
+					stream << 'B';
+					break;
+				case (1 << 3) | 4:
+					stream << 'R';
+					break;
+				case (1 << 3) | 5:
+					stream << 'Q';
+					break;
+				case (1 << 3) | 6:
+					stream << 'K';
+					break;
+				/* TODO, check error */
+				default:
+       					break;
+			}
+		}
+
+		if (i < m_height - 1)
+			stream << '/';
+	}
+
+	return stream.str();
 }
 
 void board::load_fen(const std::string &FEN)
