@@ -10,7 +10,7 @@
 board board::from_fen(const std::string &FEN)
 {
 	std::uint8_t width = 0;
-	std::uint8_t height = 1;
+	std::uint8_t height = FEN.size() > 0 ? 1 : 0;
 
 	bool first_row = true;
 
