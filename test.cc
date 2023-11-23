@@ -42,7 +42,8 @@ int main()
 
 	test_board(FEN_EXAMPLE1);
 
-	std::cout << (piece::e_BLACK_PAWN == piece::e_BLACK_PAWN) << std::endl;
+	for (std::size_t i = 0; i < 1000000; i++)
+		test_board(FEN_EXAMPLE1);
 
 	return 0;
 }
