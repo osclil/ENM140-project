@@ -33,6 +33,10 @@ public:
 	piece at(std::uint8_t row, std::uint8_t col) const { return m_board[row * m_width + col]; }
 	piece& at(std::uint8_t row, std::uint8_t col) { return m_board[row * m_width + col]; }
 
+	/* Hacky solution and doesn't perform any checks atm */
+	const piece * operator[](std::uint8_t row) const { return m_board.get() + row * m_width; }
+	piece * operator[](std::uint8_t row) { return m_board.get() + row * m_width; }
+
 	std::uint8_t get_width() const noexcept { return m_width; }
 	std::uint8_t get_height() const noexcept { return m_height; }
 
