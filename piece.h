@@ -4,6 +4,7 @@
 #define PIECE_H
 
 #include <cstdint>
+#include <type_traits>
 
 enum class piece : std::uint8_t
 {
@@ -24,6 +25,11 @@ enum class piece : std::uint8_t
 	e_WHITE_QUEEN,
 	e_WHITE_KING
 };
+
+std::uint8_t to_underlying(const piece &p)
+{
+	return static_cast<std::underlying_type<piece>::type>(p);
+}
 
 #endif /* PIECE_H */
 
