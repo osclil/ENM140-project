@@ -5,7 +5,7 @@ OBJ = obj/
 
 all: main
 
-main: $(OBJ)main.o $(OBJ)move_gen.o $(OBJ)board.o $(OBJ)piece.o
+main: $(OBJ)main.o $(OBJ)move_gen.o $(OBJ)board.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJ)%.o: $(SRC)%.cpp

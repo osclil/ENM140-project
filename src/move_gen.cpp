@@ -5,17 +5,8 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> concat(std::vector<std::string> &v1, std::vector<std::string> &v2) {
-    std::vector<std::string> v3;
-    v3.reserve(v1.size() + v2.size());
-    v3.insert(v3.end(), v1.begin(), v1.end());
-    v3.insert(v3.end(), v2.begin(), v2.end());
-
-    return v3;
-}
-
 std::vector<std::string> move_gen::all_legal_moves() {
-    std::vector<std::string> moves;
+    std::vector<std::string> all_moves;
     std::uint8_t index = 0;
     std::vector<std::uint8_t> row_col;
     std::uint8_t row = 0;
@@ -29,44 +20,47 @@ std::vector<std::string> move_gen::all_legal_moves() {
             row = row_col[0];
             col = row_col[1];
 
+            std::vector<std::string> piece_moves;
+
 			switch (p)
 			{
 				case piece::e_BLACK_PAWN:
-                    moves.push_back(legal_moves_pawn(p, row, col));
-					break;
+                    piece_moves = legal_moves_pawn(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    break;
 				case piece::e_BLACK_KNIGHT:
-                    moves.push_back(legal_moves_knight(p, row, col));
-					break;
+                    piece_moves = legal_moves_knight(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_BLACK_BISHOP:
-                    moves.push_back(legal_moves_bishop(p, row, col));
-					break;
+                    piece_moves = legal_moves_bishop(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_BLACK_ROOK:
-                    moves.push_back(legal_moves_rook(p, row, col));
-					break;
+                    piece_moves = legal_moves_rook(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_BLACK_QUEEN:
-                    moves.push_back(legal_moves_queen(p, row, col));
-					break;
+                    piece_moves = legal_moves_queen(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_BLACK_KING: 
-                    moves.push_back(legal_moves_king(p, row, col));
-					break;
+                    piece_moves = legal_moves_king(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_PAWN:
-                    moves.push_back(legal_moves_pawn(p, row, col));
-					break;
+                    piece_moves = legal_moves_pawn(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_KNIGHT:
-                    moves.push_back(legal_moves_knight(p, row, col));
-					break;
+                    piece_moves = legal_moves_knight(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_BISHOP:
-                    moves.push_back(legal_moves_bishop(p, row, col));
-					break;
+                    piece_moves = legal_moves_bishop(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_ROOK:
-                    moves.push_back(legal_moves_rook(p, row, col));
-					break;
+                    piece_moves = legal_moves_rook(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_QUEEN:
-                    moves.push_back(legal_moves_queen(p, row, col));
-					break;
+                    piece_moves = legal_moves_queen(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				case piece::e_WHITE_KING:
-                    moves.push_back(legal_moves_king(p, row, col));
-					break;
+                    piece_moves = legal_moves_king(p, row, col);
+					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());					break;
 				/* TODO, check error */
 				default:
        					break;
@@ -74,6 +68,8 @@ std::vector<std::string> move_gen::all_legal_moves() {
         }
         index++;
     }
+
+    return all_moves;
 }
 
 std::string move_gen::gen_move(std::uint8_t row_from, std::uint8_t col_from, std::uint8_t row_to, std::uint8_t col_to, piece &p) {
@@ -87,14 +83,15 @@ std::string move_gen::gen_move(std::uint8_t row_from, std::uint8_t col_from, std
     m_board.at(row_from, col_from) = p;
     m_board.at(row_to, col_to) = captured;
 
-    return move
+    return move;
 }
 
-std::vector<std::string> move_gen::legal_moves_pawn(piece p) {
+std::vector<std::string> move_gen::legal_moves_pawn(piece p, std::uint8_t row, std::uint8_t col) {
     std::uint8_t offset = (is_black(p)) ? 1 : -1;
+    std::vector<std::string> moves;
 
     // Check if square in front is empty
-    if m_board.at(row + offset, col) == piece::e_EMPTY) {
+    if (m_board.at(row + offset, col) == piece::e_EMPTY) {
         moves.push_back(gen_move(row, col, row + offset, col, p));
     }
 
