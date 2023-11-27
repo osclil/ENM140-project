@@ -172,3 +172,11 @@ void board::load_fen(const std::string &FEN)
 	}
 	/* TODO, handle case when current_index != m_width * m_height */
 }
+
+std::vector<std::uint8_t> board::to_row_col(std::uint8_t index) const
+{
+	std::vector<std::uint8_t> row_col(2);
+	row_col[0] = index / m_width;
+	row_col[1] = index % m_width;
+	return row_col;
+}

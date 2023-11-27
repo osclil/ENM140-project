@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-class moves {
+class move_gen {
     public:
-        moves(board &board) : m_board(board) {}
+        move_gen(board &board) : m_board(board) {}
 
         std::vector<std::string> all_legal_moves();
 

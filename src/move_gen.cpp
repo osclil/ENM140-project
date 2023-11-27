@@ -2,15 +2,28 @@
 
 #include "move_gen.h"
 #include "piece.h"
+#include <string>
+#include <vector>
 
-std::vector<std::string>> move_gen::all_legal_moves() {
-    std::vector<std::string>> moves;
+std::vector<std::string> concat(std::vector<std::string> &v1, std::vector<std::string> &v2) {
+    std::vector<std::string> v3;
+    v3.reserve(v1.size() + v2.size());
+    v3.insert(v3.end(), v1.begin(), v1.end());
+    v3.insert(v3.end(), v2.begin(), v2.end());
+
+    return v3;
+}
+
+std::vector<std::string> move_gen::all_legal_moves() {
+    std::vector<std::string> moves;
     std::uint8_t index = 0;
     std::vector<std::uint8_t> row_col;
     std::uint8_t row = 0;
     std::uint8_t col = 0;
 
-    for (piece p : m_board) {
+    for (uint8_t i = 0; i < m_board.get_height() * m_board.get_width(); i++) {
+        piece p = m_board.at(index);
+        
         if (p != piece::e_EMPTY) {
             row_col = m_board.to_row_col(index);
             row = row_col[0];
@@ -19,40 +32,40 @@ std::vector<std::string>> move_gen::all_legal_moves() {
 			switch (p)
 			{
 				case piece::e_BLACK_PAWN:
-                    moves.push_back(legal_moves_pawn(p, row, col)););
+                    moves.push_back(legal_moves_pawn(p, row, col));
 					break;
 				case piece::e_BLACK_KNIGHT:
-                    moves.push_back(legal_moves_knight(p, row, col)););
+                    moves.push_back(legal_moves_knight(p, row, col));
 					break;
 				case piece::e_BLACK_BISHOP:
-                    moves.push_back(legal_moves_bishop(p, row, col)););
+                    moves.push_back(legal_moves_bishop(p, row, col));
 					break;
 				case piece::e_BLACK_ROOK:
-                    moves.push_back(legal_moves_rook(p, row, col)););
+                    moves.push_back(legal_moves_rook(p, row, col));
 					break;
 				case piece::e_BLACK_QUEEN:
-                    moves.push_back(legal_moves_queen(p, row, col)););
+                    moves.push_back(legal_moves_queen(p, row, col));
 					break;
 				case piece::e_BLACK_KING: 
-                    moves.push_back(legal_moves_king(p, row, col)););
+                    moves.push_back(legal_moves_king(p, row, col));
 					break;
 				case piece::e_WHITE_PAWN:
-                    moves.push_back(legal_moves_pawn(p, row, col)););
+                    moves.push_back(legal_moves_pawn(p, row, col));
 					break;
 				case piece::e_WHITE_KNIGHT:
-                    moves.push_back(legal_moves_knight(p, row, col)););
+                    moves.push_back(legal_moves_knight(p, row, col));
 					break;
 				case piece::e_WHITE_BISHOP:
-                    moves.push_back(legal_moves_bishop(p, row, col)););
+                    moves.push_back(legal_moves_bishop(p, row, col));
 					break;
 				case piece::e_WHITE_ROOK:
-                    moves.push_back(legal_moves_rook(p, row, col)););
+                    moves.push_back(legal_moves_rook(p, row, col));
 					break;
 				case piece::e_WHITE_QUEEN:
-                    moves.push_back(legal_moves_queen(p, row, col)););
+                    moves.push_back(legal_moves_queen(p, row, col));
 					break;
 				case piece::e_WHITE_KING:
-                    moves.push_back(legal_moves_king(p, row, col)););
+                    moves.push_back(legal_moves_king(p, row, col));
 					break;
 				/* TODO, check error */
 				default:
