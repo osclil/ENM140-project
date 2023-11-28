@@ -23,10 +23,13 @@ enum class piece : std::uint8_t
 	e_WHITE_BISHOP,
 	e_WHITE_ROOK,
 	e_WHITE_QUEEN,
-	e_WHITE_KING
+	e_WHITE_KING,
+	/* Off board*/
+	e_VOID
 };
 
-std::uint8_t to_underlying(const piece &p)
+
+inline std::uint8_t to_underlying(const piece &p)
 {
 	return static_cast<std::underlying_type<piece>::type>(p);
 }

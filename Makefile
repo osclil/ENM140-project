@@ -15,7 +15,6 @@ $(OBJ)%.o: $(SRC)%.cpp
 $(OBJ)main.o: $(SRC)main.cpp $(SRC)move_gen.h $(SRC)board.h $(SRC)piece.h
 $(OBJ)move_gen.o: $(SRC)move_gen.cpp $(SRC)board.h $(SRC)piece.h
 $(OBJ)board.o: $(SRC)board.cpp $(SRC)piece.h
-$(OBJ)piece.o: $(SRC)piece.h
 
 clean:
 	rm -rf $(OBJ)*.o main

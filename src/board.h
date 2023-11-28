@@ -31,9 +31,28 @@ public:
 	static board from_fen(const std::string &);
 
 	/* Performs no check at the moment */
-	piece at(std::uint8_t row, std::uint8_t col) const { return m_board[row * m_width + col]; }
-	piece& at(std::uint8_t row, std::uint8_t col) { return m_board[row * m_width + col]; }
-	piece at(std::uint8_t index) const { return m_board[index]; }
+	piece at(std::uint8_t row, std::uint8_t col) const {
+		if (row >= m_height || col >= m_width)
+			return piece::e_VOID;
+		
+		return m_board[row * m_width + col]; 
+	}
+	
+	
+	piece& at(std::uint8_t row, std::uint8_t col) {
+		if (row >= m_height || col >= m_width)
+			return m_void;
+		
+		return m_board[row * m_width + col];	
+	}
+	
+	
+	piece at(std::uint8_t index) const {
+		if (index >= m_height * m_width)
+			return piece::e_VOID;
+		
+		return m_board[index];
+	}
 
 	/* Hacky solution and doesn't perform any checks atm */
 	const piece * operator[](std::uint8_t row) const { return m_board.get() + row * m_width; }
@@ -51,6 +70,7 @@ private:
 	std::uint8_t m_width;
 	std::uint8_t m_height;
 	std::unique_ptr<piece[]> m_board;
+	piece m_void = piece::e_VOID;
 
 };
 
