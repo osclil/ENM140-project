@@ -6,18 +6,35 @@
 
 #include "move_gen.h"
 
-void test_board(const std::string &fen)
+void print_board(const board &b)
 {
-	board b = board::from_fen(fen);
-
-	std::cout << "Loaded board from FEN: " << fen << std::endl;
-
 	for (int i = 0; i < b.get_height(); i++)
 	{
 		for (int j = 0; j < b.get_width(); j++)
 			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
 		std::cout << std::endl;
 	}
+}
+
+std::vector<std::string> legal_moves(std::string &FEN, bool whites_turn)
+{
+	move_gen mg = move_gen(FEN, whites_turn);
+	return mg.all_legal_moves();
+}
+
+void print_FEN(const std::string &FEN)
+{
+	board b = board::from_fen(FEN);
+	print_board(b);
+}
+
+void test_board(const std::string &fen)
+{
+	board b = board::from_fen(fen);
+
+	std::cout << "Loaded board from FEN: " << fen << std::endl;
+
+	print_board(b);
 
 	const std::string fen_test = b.to_fen();
 	std::cout << "FEN computed from board: " << fen_test << std::endl;
@@ -34,7 +51,7 @@ int main()
 	const std::string FEN_DANISH = "rnbqkbnr/pppp1ppp/8/8/3pP3/2P5/PP3PPP/RNBQKBNR";
 	const std::string FEN_GRUENFELD = "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/1QN5/PP2PPPP/R1B1KBNR";
 
-	const std::string FEN_EXAMPLE1 = "rkr/ppp/3/PPP/RKR"; /* The 5x3 example shown */
+	std::string FEN_EXAMPLE1 = "rkr/ppp/3/PPP/RKR"; /* The 5x3 example shown */
 
 	test_board(FEN_START);
 	test_board(FEN_DANISH);
@@ -42,7 +59,12 @@ int main()
 
 	test_board(FEN_EXAMPLE1);
 
-	std::cout << (piece::e_BLACK_PAWN == piece::e_BLACK_PAWN) << std::endl;
+	std::vector<std::string> legal_moves_test = legal_moves(FEN_EXAMPLE1, true);
+
+	for (size_t i = 0; i < legal_moves_test.size(); i++) {
+		print_FEN(legal_moves_test[i]);
+		std::cout << std::endl;
+	}
 
 	return 0;
-}
+};
