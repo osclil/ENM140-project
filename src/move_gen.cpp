@@ -12,8 +12,7 @@
 */
 
 std::vector<std::string> move_gen::all_legal_moves() {
-    std::vector<std::string> all_moves;
-    std::vector<std::uint8_t> row_col;
+	std::vector<std::string> all_moves;
 
     // Loop all over all squares on the board
     for (std::uint8_t i = 0; i < m_board.get_height() * m_board.get_width(); i++) {
@@ -21,9 +20,7 @@ std::vector<std::string> move_gen::all_legal_moves() {
 
         // If the square is a piece of the same color as the player whose turn it is, generate moves for it
         if ((m_whites_turn && is_white(m_piece)) || (!m_whites_turn && is_black(m_piece))) {
-            row_col = m_board.to_row_col(i);
-            m_row = row_col[0];
-            m_col = row_col[1];
+            m_pos = m_board.to_pos(i);
 
             std::vector<std::string> piece_moves;
 
@@ -90,12 +87,12 @@ std::vector<std::string> move_gen::all_legal_moves() {
 std::string move_gen::gen_FEN(std::uint8_t row_to, std::uint8_t col_to) {
     piece captured = m_board.at(row_to, col_to);
 
-    m_board.at(m_row, m_col) = piece::e_EMPTY;
+    m_board.at(m_pos.row, m_pos.col) = piece::e_EMPTY;
     m_board.at(row_to, col_to) = this->m_piece;
 
     std::string move = m_board.to_fen();
 
-    m_board.at(m_row, m_col) = this->m_piece;
+    m_board.at(m_pos.row, m_pos.col) = this->m_piece;
     m_board.at(row_to, col_to) = captured;
 
     return move;
@@ -107,12 +104,12 @@ std::vector<std::string> move_gen::legal_moves_pawn() {
     std::vector<std::string> moves;
 
     // Check if square in front is empty
-    if (m_board.at(m_row + offset, m_col) == piece::e_EMPTY) {
-        moves.push_back(this->gen_FEN(m_row + offset, m_col));
+    if (m_board.at(m_pos.row + offset, m_pos.col) == piece::e_EMPTY) {
+        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col));
     }
 
-    //if ((m_whites_turn && is_black(m_board.at(m_row + offset, m_col - 1))) || (!m_whites_turn && is_white(m_board.at(m_row + offset, m_col - 1)))) {
-    //    moves.push_back(this->gen_FEN(m_row + offset, m_col - 1));
+    //if ((m_whites_turn && is_black(m_board.at(m_pos.row + offset, m_pos.col - 1))) || (!m_whites_turn && is_white(m_board.at(m_row + offset, m_col - 1)))) {
+    //    moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col - 1));
     //}
 
     return moves;
