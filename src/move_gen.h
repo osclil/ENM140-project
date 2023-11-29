@@ -17,15 +17,15 @@ for, as well as a piece member to keep track of the piece itself.
 */
 class move_gen {
     public:
-        move_gen(std::string &FEN , bool whites_turn) : m_board(board::from_fen(FEN)), m_whites_turn(whites_turn) {};
+        move_gen(std::string &FEN , bool whites_turn) : m_board(board::from_fen(FEN)), m_pos({}), m_whites_turn(whites_turn) {};
 
         std::vector<std::string> all_legal_moves();
 
     private:
-        board m_board;
-        std::uint8_t m_row;
-        std::uint8_t m_col;
-        piece m_piece;
+
+	board m_board;
+	board::position m_pos;
+	piece m_piece;
         bool m_whites_turn;
 
         std::string gen_FEN(std::uint8_t row_to, std::uint8_t col_to);
