@@ -6,6 +6,11 @@
 #include <vector>
 #include <iostream>
 
+/* OSCAR WILL: 
+    1. Do king raycasting
+    2  Do eval function
+*/
+
 std::vector<std::string> move_gen::all_legal_moves() {
     std::vector<std::string> all_moves;
     std::vector<std::uint8_t> row_col;
@@ -96,6 +101,7 @@ std::string move_gen::gen_FEN(std::uint8_t row_to, std::uint8_t col_to) {
     return move;
 }
 
+/* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_pawn() {
     std::uint8_t offset = (is_black(m_piece)) ? 1 : -1;
     std::vector<std::string> moves;
@@ -112,30 +118,35 @@ std::vector<std::string> move_gen::legal_moves_pawn() {
     return moves;
 }
 
+/* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_knight() {
     std::vector<std::string> moves;
 
     return moves;
 }
 
+/* ANYONE */
 std::vector<std::string> move_gen::legal_moves_bishop() {
     std::vector<std::string> moves;
 
     return moves;
 }
 
+/* ANYONE */
 std::vector<std::string> move_gen::legal_moves_rook() {
     std::vector<std::string> moves;
 
     return moves;
 }
 
+/* ANYONE */
 std::vector<std::string> move_gen::legal_moves_queen() {
     std::vector<std::string> moves;
 
     return moves;
 }
 
+/* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_king() {
     std::vector<std::string> moves;
 

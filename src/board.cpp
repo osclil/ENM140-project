@@ -3,8 +3,13 @@
 #include <cctype>
 #include <algorithm>
 #include <sstream>
-
 #include "board.h"
+
+/* TODO: 
+	1. Skriva om från vector till pair för att hålla koll på positioner
+	2. Lägga till pairs för kungarnas position i board.h
+	3. Raycasting från kungen för att se om den är i schack
+*/
 
 /* Deduce width and height from the FEN and returns a board object */
 board board::from_fen(const std::string &FEN)
