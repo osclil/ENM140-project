@@ -60,9 +60,14 @@ int main()
 	test_board(FEN_EXAMPLE1);
 
 	std::vector<std::string> legal_moves_test = legal_moves(FEN_EXAMPLE1, true);
+	std::vector<std::string> legal_moves_test2 = legal_moves(legal_moves_test[0], false);
 
-	for (size_t i = 0; i < legal_moves_test.size(); i++) {
-		print_FEN(legal_moves_test[i]);
+	std::cout << std::endl;
+	print_FEN(legal_moves_test[0]);
+	std::cout << std::endl;
+	
+	for (size_t i = 0; i < legal_moves_test2.size(); i++) {
+		print_FEN(legal_moves_test2[i]);
 		std::cout << std::endl;
 	}
 

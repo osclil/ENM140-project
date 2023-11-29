@@ -98,19 +98,31 @@ std::string move_gen::gen_FEN(std::uint8_t row_to, std::uint8_t col_to) {
     return move;
 }
 
+bool move_gen::square_is_empty(std::uint8_t row, std::uint8_t col) {
+    return m_board.at(row, col) == piece::e_EMPTY;
+}
+
+bool move_gen::square_is_enemy(std::uint8_t row, std::uint8_t col) {
+    return (m_whites_turn && is_black(m_board.at(row, col))) || (!m_whites_turn && is_white(m_board.at(row, col)));
+}
+
 /* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_pawn() {
     std::uint8_t offset = (is_black(m_piece)) ? 1 : -1;
     std::vector<std::string> moves;
 
     // Check if square in front is empty
-    if (m_board.at(m_pos.row + offset, m_pos.col) == piece::e_EMPTY) {
+    if (square_is_empty(m_pos.row + offset, m_pos.col)) {
         moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col));
     }
 
-    //if ((m_whites_turn && is_black(m_board.at(m_pos.row + offset, m_pos.col - 1))) || (!m_whites_turn && is_white(m_board.at(m_row + offset, m_col - 1)))) {
-    //    moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col - 1));
-    //}
+    if (square_is_enemy(m_pos.row + offset, m_pos.col - 1)) {
+        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col - 1));
+    }
+
+    if (square_is_enemy(m_pos.row + offset, m_pos.col + 1)) {
+        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col + 1));
+    }
 
     return moves;
 }
