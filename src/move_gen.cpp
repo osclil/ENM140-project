@@ -1,7 +1,6 @@
 /* move_gen.cc */
 
 #include "move_gen.h"
-#include "piece.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -106,6 +105,14 @@ bool move_gen::square_is_enemy(std::uint8_t row, std::uint8_t col) {
     return (m_whites_turn && is_black(m_board.at(row, col))) || (!m_whites_turn && is_white(m_board.at(row, col)));
 }
 
+bool move_gen::square_is_moveable(std::uint8_t row, std::uint8_t col) {
+    return square_is_empty(row, col) || square_is_enemy(row, col);
+}
+
+bool move_gen::square_is_movable(board::position pos) {
+    return square_is_moveable(pos.row, pos.col);
+}
+
 /* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_pawn() {
     std::uint8_t offset = (is_black(m_piece)) ? 1 : -1;
@@ -130,9 +137,25 @@ std::vector<std::string> move_gen::legal_moves_pawn() {
 /* SAMUEL */
 std::vector<std::string> move_gen::legal_moves_knight() {
     std::vector<std::string> moves;
+    board::position pos;
+
+    // Knight moves: eight possible movements
+    const int rowOffsets[8] = {2, 1, -1, -2, -2, -1, 1, 2};
+    const int colOffsets[8] = {1, 2, 2, 1, -1, -2, -2, -1};
+
+    for (uint8_t i = 0; i < 8; ++i) {
+        pos.row = m_pos.row + rowOffsets[i];
+        pos.col = m_pos.col + colOffsets[i];
+
+        if (square_is_movable(pos)) {
+            moves.push_back(this->gen_FEN(pos.row, pos.col));
+        }
+    }
 
     return moves;
 }
+
+
 
 /* ANYONE */
 std::vector<std::string> move_gen::legal_moves_bishop() {

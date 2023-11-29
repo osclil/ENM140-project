@@ -31,6 +31,8 @@ class move_gen {
         std::string gen_FEN(std::uint8_t row_to, std::uint8_t col_to);
         bool square_is_empty(std::uint8_t row, std::uint8_t col);
         bool square_is_enemy(std::uint8_t row, std::uint8_t col);
+        bool square_is_moveable(std::uint8_t row, std::uint8_t col);
+        bool square_is_movable(board::position pos);
 
         std::vector<std::string> legal_moves_pawn();
         std::vector<std::string> legal_moves_knight();

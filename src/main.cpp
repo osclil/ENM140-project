@@ -47,7 +47,7 @@ void test_board(const std::string &fen)
 
 int main()
 {
-	const std::string FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+	std::string FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 	const std::string FEN_DANISH = "rnbqkbnr/pppp1ppp/8/8/3pP3/2P5/PP3PPP/RNBQKBNR";
 	const std::string FEN_GRUENFELD = "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/1QN5/PP2PPPP/R1B1KBNR";
 
@@ -60,12 +60,12 @@ int main()
 	test_board(FEN_EXAMPLE1);
 
 	std::vector<std::string> legal_moves_test = legal_moves(FEN_EXAMPLE1, true);
-	std::vector<std::string> legal_moves_test2 = legal_moves(legal_moves_test[0], false);
+	std::vector<std::string> legal_moves_test2 = legal_moves(FEN_START, true);
 
 	std::cout << std::endl;
 	print_FEN(legal_moves_test[0]);
 	std::cout << std::endl;
-	
+
 	for (size_t i = 0; i < legal_moves_test2.size(); i++) {
 		print_FEN(legal_moves_test2[i]);
 		std::cout << std::endl;
