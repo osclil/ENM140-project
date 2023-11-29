@@ -12,18 +12,21 @@ public:
         board = std::vector<std::vector<char>>(3, std::vector<char>(3, ' '));
     }
     char currentPlayer = 'X';
+    std::vector<std::vector<char>> board;
 
     std::vector<std::vector<char>> getBoard() {
         return board;
     }
 
-    std::vector<std::pair<int, int>> generateLegalMoves() {
-        std::vector<std::pair<int, int>> legalMoves;
+    std::vector<TicTacToe> generateLegalMoves() {
+        std::vector<TicTacToe> legalMoves;
 
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j < board.size(); j++) {
                 if (board[i][j] == ' ') {
-                    legalMoves.push_back(std::make_pair(i, j));
+                    TicTacToe newState = *this;
+                    newState.makeMove(std::make_pair(i, j));
+                    legalMoves.push_back(newState);
                 }
             }
         }
@@ -104,24 +107,23 @@ private:
 
         return true;
     }
-
-    std::vector<std::vector<char>> board;
 };
 
 int main() {
     TicTacToe game;
-    MinMax<TicTacToe, std::pair<int, int>> minmax;
+    MinMax<TicTacToe> minmax;
 
     while (!game.isGameOver()) {
-        std::pair<int, int> bestMove;
+        TicTacToe bestMove;
         // std::cout << game.currentPlayer << "'s turn" << std::endl;
+        // std::cout << "Evaluate: " << minmax.minmaxAlphaBeta(game, 9, game.currentPlayer == 'X', std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
 
         if (game.currentPlayer == 'X')
             bestMove = minmax.findBestMove(game, 9, true).second;
         else 
             bestMove = minmax.findBestMove(game, 9, false).second;
         
-        game.makeMove(bestMove);
+        game = bestMove;
 
         std::vector<std::vector<char>> board = game.getBoard();
         for (int i = 0; i < board.size(); i++) {

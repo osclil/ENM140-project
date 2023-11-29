@@ -32,4 +32,4 @@
 *.app
 
 # Specific files
-./.vscode/*
+.vscode/*
