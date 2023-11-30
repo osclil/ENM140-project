@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 void append_moves(std::vector<board::move> &moves, std::vector<board::move> &new_moves) {
     moves.insert(moves.end(), new_moves.begin(), new_moves.end());
@@ -86,11 +87,56 @@ std::vector<board::move> move_gen::all_possible_moves() {
     return all_possible_moves;
 }
 
+bool move_gen::in_check() {
+    std::vector<board::move> counter_moves;
+    
+    // Calculate all possible moves from the new board from the opponent's perspective
+    m_whites_turn = !m_whites_turn;
+    counter_moves = this->all_possible_moves();
+    m_whites_turn = !m_whites_turn;
+
+    // Check if any of the counter moves captures the king
+    piece king = (m_whites_turn) ? piece::e_WHITE_KING : piece::e_BLACK_KING;
+    bool king_captured = false;
+
+    for (auto counter_move : counter_moves) {
+        if (m_board.at(counter_move.to.row, counter_move.to.col) == king) {
+            king_captured = true;
+            break;
+        }
+    }
+
+    return king_captured;
+}
+
+int move_gen::evaluate() {
+    if (in_check()) {
+        return (m_whites_turn) ? -1 : 1;
+    } else {
+        return 0;
+    }
+}
+
 std::vector<std::string> move_gen::all_legal_moves() {
     std::vector<std::string> FENs;
     std::vector<board::move> all_possible_moves = this->all_possible_moves();
 
-    std::vector<board::move> counter_moves;
+    /*
+    std::unordered_map<piece, int> piece_count = {
+        {piece::e_BLACK_PAWN, 0},
+        {piece::e_BLACK_KNIGHT, 0},
+        {piece::e_BLACK_BISHOP, 0},
+        {piece::e_BLACK_ROOK, 0},
+        {piece::e_BLACK_QUEEN, 0},
+        {piece::e_BLACK_KING, 0},
+        {piece::e_WHITE_PAWN, 0},
+        {piece::e_WHITE_KNIGHT, 0},
+        {piece::e_WHITE_BISHOP, 0},
+        {piece::e_WHITE_ROOK, 0},
+        {piece::e_WHITE_QUEEN, 0},
+        {piece::e_WHITE_KING, 0}
+    };
+    */
 
     for (auto move : all_possible_moves) {
         piece piece_from = m_board.at(move.from.row, move.from.col);
@@ -99,32 +145,24 @@ std::vector<std::string> move_gen::all_legal_moves() {
         // Temporarily move piece
         m_board.at(move.from.row, move.from.col) = piece::e_EMPTY;
         m_board.at(move.to.row, move.to.col) = piece_from;
-        
-        // Calculate all possible moves from the new board from the opponent's perspective
-        m_whites_turn = !m_whites_turn;
-        counter_moves = this->all_possible_moves();
-        m_whites_turn = !m_whites_turn;
 
-        // Check if any of the counter moves captures the king
-        piece king = (m_whites_turn) ? piece::e_WHITE_KING : piece::e_BLACK_KING;
-        bool king_captured = false;
-
-        for (auto counter_move : counter_moves) {
-            if (m_board.at(counter_move.to.row, counter_move.to.col) == king) {
-                king_captured = true;
-                break;
-            }
-        }
-
-        // If the king cannot be captured, we cannot be in check, so the move is legal
-        if (!king_captured) {
+        if (!in_check()) {
             FENs.push_back(m_board.to_fen());
+            //piece_count[piece_from]++;
         }
 
         // Move piece back
         m_board.at(move.from.row, move.from.col) = piece_from;
         m_board.at(move.to.row, move.to.col) = piece_to;
     }
+
+    /*
+    for (auto piece : piece_count) {
+        std::cout << piece_to_string(piece.first) << " : " << piece.second << std::endl;
+    }
+
+    std::cout << std::endl;
+    */
 
     return FENs;
 }
