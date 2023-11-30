@@ -46,7 +46,7 @@ public:
 
 	/* Performs no check at the moment */
 	piece at(std::int8_t row, std::int8_t col) const {
-		if (row > m_height - 1 || col > m_width - 1)
+		if (row > m_height - 1 || row < 0 || col > m_width - 1 || col < 0)
 			return piece::e_VOID;
 		
 		return m_board[row * m_width + col]; 
@@ -54,7 +54,7 @@ public:
 	
 	
 	piece& at(std::int8_t row, std::int8_t col) {
-		if (row > m_height - 1 || col > m_width - 1)
+		if (row > m_height - 1 || row < 0 || col > m_width - 1 || col < 0)
 			return m_void;
 		
 		return m_board[row * m_width + col];	

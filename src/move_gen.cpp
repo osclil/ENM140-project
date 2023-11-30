@@ -130,29 +130,6 @@ std::vector<std::string> move_gen::all_legal_moves() {
     return FENs;
 }
 
-/*
-std::vector<std::string> move_gen::gen_FENs(std::vector<board::move> moves) {
-    std::vector<std::string> FENs;
-
-    for (auto move : moves) {
-        piece piece_from = m_board.at(move.from.row, move.from.col);
-        piece piece_to = m_board.at(move.to.row, move.to.col);
-
-        m_board.at(move.from.row, move.from.col) = piece::e_EMPTY;
-        m_board.at(move.to.row, move.to.col) = piece_to;
-
-        // TODO: Implement check checking
-
-        FENs.push_back(m_board.to_fen());
-
-        m_board.at(move.from.row, move.from.col) = piece_from;
-        m_board.at(move.to.row, move.to.col) = piece_to;
-    }
-
-    return FENs;
-}
-*/
-
 bool move_gen::square_is_empty(std::int8_t row, std::int8_t col) {
     return m_board.at(row, col) == piece::e_EMPTY;
 }

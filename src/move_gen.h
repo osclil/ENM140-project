@@ -23,19 +23,15 @@ class move_gen {
         std::vector<board::move> all_possible_moves();
 
     private:
-
-	board m_board;
-	board::position m_pos;
-	piece m_piece;
+        board m_board;
+        board::position m_pos;
+        piece m_piece;
         bool m_whites_turn;
-
-        // std::vector<std::string> gen_FENs(std::vector<board::move> moves);
         bool square_is_empty(std::int8_t row, std::int8_t col);
         bool square_is_enemy(std::int8_t row, std::int8_t col);
         bool square_is_moveable(std::int8_t row, std::int8_t col);
         bool square_is_movable(board::position pos);
 
-        std::vector<board::move> legal_diagonal_pawn_moves(board::position pos_from);
         std::vector<board::move> legal_moves_pawn();
         
         std::vector<board::move> legal_moves_knight();
