@@ -89,7 +89,6 @@ std::vector<board::move> move_gen::all_possible_moves() {
 std::vector<std::string> move_gen::all_legal_moves() {
     std::vector<std::string> FENs;
     std::vector<board::move> all_possible_moves = this->all_possible_moves();
-    std::cout << "All possible moves: " << all_possible_moves.size() << std::endl;
 
     std::vector<board::move> counter_moves;
 
@@ -132,6 +131,10 @@ std::vector<std::string> move_gen::all_legal_moves() {
 
 bool move_gen::square_is_empty(std::int8_t row, std::int8_t col) {
     return m_board.at(row, col) == piece::e_EMPTY;
+}
+
+bool move_gen::square_is_empty(board::position pos) {
+    return square_is_empty(pos.row, pos.col);
 }
 
 bool move_gen::square_is_enemy(std::int8_t row, std::int8_t col) {
@@ -187,32 +190,182 @@ std::vector<board::move> move_gen::legal_moves_knight() {
     return moves;
 }
 
-
-
-/* ANYONE */
-std::vector<board::move> move_gen::legal_moves_bishop() {
+std::vector<board::move> move_gen::check_file() {
     std::vector<board::move> moves;
+    board::position to_pos;
+    to_pos.col = m_pos.col;
+
+    // Check file up
+    for (std::int8_t i = m_pos.row + 1; i < m_board.get_height(); ++i) {
+        to_pos.row = i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    // Check file down
+    for (std::int8_t i = m_pos.row - 1; i >= 0; --i) {
+        to_pos.row = i;
+        to_pos.col = m_pos.col;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
 
     return moves;
 }
 
-/* ANYONE */
+std::vector<board::move> move_gen::check_rank() {
+    std::vector<board::move> moves;
+    board::position to_pos;
+    to_pos.row = m_pos.row;
+
+    // Check rank right
+    for (std::int8_t i = m_pos.col + 1; i < m_board.get_width(); ++i) {
+        to_pos.col = i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    // Check rank left
+    for (std::int8_t i = m_pos.col - 1; i >= 0; --i) {
+        to_pos.col = i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    return moves;
+}
+
+std::vector<board::move> move_gen::check_diagonal() {
+    std::vector<board::move> moves;
+    board::position to_pos;
+
+    // Check diagonal up-right
+    for (std::int8_t i = 1; m_pos.row + i < m_board.get_height() && m_pos.col + i < m_board.get_width(); ++i) {
+        to_pos.row = m_pos.row + i;
+        to_pos.col = m_pos.col + i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    // Check diagonal up-left
+    for (std::int8_t i = 1; m_pos.row + i < m_board.get_height() && m_pos.col - i >= 0; ++i) {
+        to_pos.row = m_pos.row + i;
+        to_pos.col = m_pos.col - i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    // Check diagonal down-right
+    for (std::int8_t i = 1; m_pos.row - i >= 0 && m_pos.col + i < m_board.get_width(); ++i) {
+        to_pos.row = m_pos.row - i;
+        to_pos.col = m_pos.col + i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    // Check diagonal down-left
+    for (std::int8_t i = 1; m_pos.row - i >= 0 && m_pos.col - i >= 0; ++i) {
+        to_pos.row = m_pos.row - i;
+        to_pos.col = m_pos.col - i;
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+
+        if (!square_is_empty(to_pos)) {
+            break;
+        }
+    }
+
+    return moves;
+}
+
+std::vector<board::move> move_gen::legal_moves_bishop() {
+    return check_diagonal();
+}
+
 std::vector<board::move> move_gen::legal_moves_rook() {
     std::vector<board::move> moves;
 
+    std::vector<board::move> file_moves = check_file();
+    std::vector<board::move> rank_moves = check_rank();
+
+    append_moves(moves, file_moves);
+    append_moves(moves, rank_moves);
+
     return moves;
 }
 
-/* ANYONE */
 std::vector<board::move> move_gen::legal_moves_queen() {
     std::vector<board::move> moves;
 
+    std::vector<board::move> file_moves = check_file();
+    std::vector<board::move> rank_moves = check_rank();
+    std::vector<board::move> diagonal_moves = check_diagonal();
+
+    append_moves(moves, file_moves);
+    append_moves(moves, rank_moves);
+    append_moves(moves, diagonal_moves);
+    
     return moves;
 }
 
-/* SAMUEL */
 std::vector<board::move> move_gen::legal_moves_king() {
     std::vector<board::move> moves;
+
+    // King moves: eight possible movements
+    const int8_t rowOffsets[8] = {1, 1, 1, 0, 0, -1, -1, -1};
+    const int8_t colOffsets[8] = {1, 0, -1, 1, -1, 1, 0, -1};
+
+    for (std::int8_t i = 0; i < 8; ++i) {
+        board::position to_pos = {static_cast<std::int8_t>(m_pos.row + rowOffsets[i]), static_cast<std::int8_t>(m_pos.col + colOffsets[i])};
+
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
+        }
+    }
 
     return moves;
 }

@@ -28,9 +28,14 @@ class move_gen {
         piece m_piece;
         bool m_whites_turn;
         bool square_is_empty(std::int8_t row, std::int8_t col);
+        bool square_is_empty(board::position pos);
         bool square_is_enemy(std::int8_t row, std::int8_t col);
         bool square_is_moveable(std::int8_t row, std::int8_t col);
         bool square_is_movable(board::position pos);
+        
+        std::vector<board::move> check_file();
+        std::vector<board::move> check_rank();
+        std::vector<board::move> check_diagonal();
 
         std::vector<board::move> legal_moves_pawn();
         
