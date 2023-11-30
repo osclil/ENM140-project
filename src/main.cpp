@@ -60,7 +60,11 @@ int main()
 	test_board(FEN_EXAMPLE1);
 
 	std::vector<std::string> legal_moves_test = legal_moves(FEN_EXAMPLE1, true);
-	std::vector<std::string> legal_moves_test2 = legal_moves(FEN_START, true);
+	std::vector<std::string> legal_moves_test2 = legal_moves(FEN_START, false);
+
+	/* This FEN should have 23 moves to make for black and 35 for white */
+	std::string FEN_TESTING = "rnbqk1rQ/4bn2/pppp1p2/4R2B/B3p1pp/PPPPPPPP/8/1NB1K1NR";
+	test_board(FEN_TESTING);
 
 	std::cout << std::endl;
 	print_FEN(legal_moves_test[0]);
@@ -70,6 +74,12 @@ int main()
 		print_FEN(legal_moves_test2[i]);
 		std::cout << std::endl;
 	}
+	
+	std::vector<std::string> num_legal_moves_test_w = legal_moves(FEN_TESTING, true);
+	std::vector<std::string> num_legal_moves_test_b = legal_moves(FEN_TESTING, false);
+	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
+	std::cout << "Number of legal moves for black: " << num_legal_moves_test_b.size() << std::endl;
+
 
 	return 0;
 };

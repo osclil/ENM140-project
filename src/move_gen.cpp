@@ -5,73 +5,77 @@
 #include <vector>
 #include <iostream>
 
-/* OSCAR WILL: 
-    1. Do king raycasting
-    2  Do eval function
-*/
+void append_moves(std::vector<board::move> &moves, std::vector<board::move> &new_moves) {
+    moves.insert(moves.end(), new_moves.begin(), new_moves.end());
+}
 
-std::vector<std::string> move_gen::all_legal_moves() {
-	std::vector<std::string> all_moves;
+void append_FENs(std::vector<std::string> &FENs, std::vector<std::string> &new_FENs) {
+    FENs.insert(FENs.end(), new_FENs.begin(), new_FENs.end());
+}
+
+std::vector<board::move> move_gen::all_possible_moves() {
+	std::vector<board::move> all_possible_moves;
 
     // Loop all over all squares on the board
-    for (std::uint8_t i = 0; i < m_board.get_height() * m_board.get_width(); i++) {
+    // TODO: Implement so we don't have to loop over empty squares
+    for (std::int8_t i = 0; i < m_board.get_height() * m_board.get_width(); i++) {
         m_piece = m_board.at(i);
 
         // If the square is a piece of the same color as the player whose turn it is, generate moves for it
         if ((m_whites_turn && is_white(m_piece)) || (!m_whites_turn && is_black(m_piece))) {
             m_pos = m_board.to_pos(i);
 
-            std::vector<std::string> piece_moves;
+            std::vector<board::move> piece_moves;
 
 			switch (m_piece)
 			{
 				case piece::e_BLACK_PAWN:
                     piece_moves = this->legal_moves_pawn();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_BLACK_KNIGHT:
                     piece_moves = this->legal_moves_knight();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_BLACK_BISHOP:
                     piece_moves = this->legal_moves_bishop();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_BLACK_ROOK:
                     piece_moves = this->legal_moves_rook();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_BLACK_QUEEN:
                     piece_moves = this->legal_moves_queen();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_BLACK_KING: 
                     piece_moves = this->legal_moves_king();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_PAWN:
                     piece_moves = this->legal_moves_pawn();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_KNIGHT:
                     piece_moves = this->legal_moves_knight();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_BISHOP:
                     piece_moves = this->legal_moves_bishop();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_ROOK:
                     piece_moves = this->legal_moves_rook();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_QUEEN:
                     piece_moves = this->legal_moves_queen();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				case piece::e_WHITE_KING:
                     piece_moves = this->legal_moves_king();
-					all_moves.insert(all_moves.end(), piece_moves.begin(), piece_moves.end());
+                    append_moves(all_possible_moves, piece_moves);
                     break;
 				default:
        					break;
@@ -79,33 +83,85 @@ std::vector<std::string> move_gen::all_legal_moves() {
         }
     }
 
-    return all_moves;
+    return all_possible_moves;
 }
 
-// Temporarily move piece, convert m_board to FEN, then move piece back
-std::string move_gen::gen_FEN(std::uint8_t row_to, std::uint8_t col_to) {
-    piece captured = m_board.at(row_to, col_to);
+std::vector<std::string> move_gen::all_legal_moves() {
+    std::vector<std::string> FENs;
+    std::vector<board::move> all_possible_moves = this->all_possible_moves();
+    std::cout << "All possible moves: " << all_possible_moves.size() << std::endl;
 
-    m_board.at(m_pos.row, m_pos.col) = piece::e_EMPTY;
-    m_board.at(row_to, col_to) = this->m_piece;
+    std::vector<board::move> counter_moves;
 
-    std::string move = m_board.to_fen();
+    for (auto move : all_possible_moves) {
+        piece piece_from = m_board.at(move.from.row, move.from.col);
+        piece piece_to = m_board.at(move.to.row, move.to.col);
 
-    m_board.at(m_pos.row, m_pos.col) = this->m_piece;
-    m_board.at(row_to, col_to) = captured;
+        // Temporarily move piece
+        m_board.at(move.from.row, move.from.col) = piece::e_EMPTY;
+        m_board.at(move.to.row, move.to.col) = piece_from;
+        
+        // Calculate all possible moves from the new board from the opponent's perspective
+        m_whites_turn = !m_whites_turn;
+        counter_moves = this->all_possible_moves();
+        m_whites_turn = !m_whites_turn;
 
-    return move;
+        // Check if any of the counter moves captures the king
+        piece king = (m_whites_turn) ? piece::e_WHITE_KING : piece::e_BLACK_KING;
+        bool king_captured = false;
+
+        for (auto counter_move : counter_moves) {
+            if (m_board.at(counter_move.to.row, counter_move.to.col) == king) {
+                king_captured = true;
+                break;
+            }
+        }
+
+        // If the king cannot be captured, we cannot be in check, so the move is legal
+        if (!king_captured) {
+            FENs.push_back(m_board.to_fen());
+        }
+
+        // Move piece back
+        m_board.at(move.from.row, move.from.col) = piece_from;
+        m_board.at(move.to.row, move.to.col) = piece_to;
+    }
+
+    return FENs;
 }
 
-bool move_gen::square_is_empty(std::uint8_t row, std::uint8_t col) {
+/*
+std::vector<std::string> move_gen::gen_FENs(std::vector<board::move> moves) {
+    std::vector<std::string> FENs;
+
+    for (auto move : moves) {
+        piece piece_from = m_board.at(move.from.row, move.from.col);
+        piece piece_to = m_board.at(move.to.row, move.to.col);
+
+        m_board.at(move.from.row, move.from.col) = piece::e_EMPTY;
+        m_board.at(move.to.row, move.to.col) = piece_to;
+
+        // TODO: Implement check checking
+
+        FENs.push_back(m_board.to_fen());
+
+        m_board.at(move.from.row, move.from.col) = piece_from;
+        m_board.at(move.to.row, move.to.col) = piece_to;
+    }
+
+    return FENs;
+}
+*/
+
+bool move_gen::square_is_empty(std::int8_t row, std::int8_t col) {
     return m_board.at(row, col) == piece::e_EMPTY;
 }
 
-bool move_gen::square_is_enemy(std::uint8_t row, std::uint8_t col) {
+bool move_gen::square_is_enemy(std::int8_t row, std::int8_t col) {
     return (m_whites_turn && is_black(m_board.at(row, col))) || (!m_whites_turn && is_white(m_board.at(row, col)));
 }
 
-bool move_gen::square_is_moveable(std::uint8_t row, std::uint8_t col) {
+bool move_gen::square_is_moveable(std::int8_t row, std::int8_t col) {
     return square_is_empty(row, col) || square_is_enemy(row, col);
 }
 
@@ -113,42 +169,41 @@ bool move_gen::square_is_movable(board::position pos) {
     return square_is_moveable(pos.row, pos.col);
 }
 
-/* SAMUEL */
-std::vector<std::string> move_gen::legal_moves_pawn() {
-    std::uint8_t offset = (is_black(m_piece)) ? 1 : -1;
-    std::vector<std::string> moves;
+std::vector<board::move> move_gen::legal_moves_pawn() {
+    std::int8_t offset = (is_black(m_piece)) ? 1 : -1;
+    std::vector<board::move> moves;
 
-    // Check if square in front is empty
+    std::int8_t to_row = static_cast<std::int8_t>(m_pos.row + offset);
+
     if (square_is_empty(m_pos.row + offset, m_pos.col)) {
-        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col));
+        moves.push_back(board::move{m_pos, board::position{to_row, m_pos.col}});
     }
 
     if (square_is_enemy(m_pos.row + offset, m_pos.col - 1)) {
-        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col - 1));
+        moves.push_back(board::move{m_pos, board::position{to_row, static_cast<std::int8_t>(m_pos.col - 1)}});
     }
 
     if (square_is_enemy(m_pos.row + offset, m_pos.col + 1)) {
-        moves.push_back(this->gen_FEN(m_pos.row + offset, m_pos.col + 1));
+        moves.push_back(board::move{m_pos, board::position{to_row, static_cast<std::int8_t>(m_pos.col + 1)}});
     }
 
     return moves;
 }
 
-/* SAMUEL */
-std::vector<std::string> move_gen::legal_moves_knight() {
-    std::vector<std::string> moves;
-    board::position pos;
+std::vector<board::move> move_gen::legal_moves_knight() {
+    std::vector<board::move> moves;
+    board::position to_pos;
 
     // Knight moves: eight possible movements
-    const int rowOffsets[8] = {2, 1, -1, -2, -2, -1, 1, 2};
-    const int colOffsets[8] = {1, 2, 2, 1, -1, -2, -2, -1};
+    const int8_t rowOffsets[8] = {2, 1, -1, -2, -2, -1, 1, 2};
+    const int8_t colOffsets[8] = {1, 2, 2, 1, -1, -2, -2, -1};
 
-    for (uint8_t i = 0; i < 8; ++i) {
-        pos.row = m_pos.row + rowOffsets[i];
-        pos.col = m_pos.col + colOffsets[i];
+    for (std::int8_t i = 0; i < 8; ++i) {
+        to_pos.row = m_pos.row + rowOffsets[i];
+        to_pos.col = m_pos.col + colOffsets[i];
 
-        if (square_is_movable(pos)) {
-            moves.push_back(this->gen_FEN(pos.row, pos.col));
+        if (square_is_movable(to_pos)) {
+            moves.push_back({m_pos, to_pos});
         }
     }
 
@@ -158,29 +213,29 @@ std::vector<std::string> move_gen::legal_moves_knight() {
 
 
 /* ANYONE */
-std::vector<std::string> move_gen::legal_moves_bishop() {
-    std::vector<std::string> moves;
+std::vector<board::move> move_gen::legal_moves_bishop() {
+    std::vector<board::move> moves;
 
     return moves;
 }
 
 /* ANYONE */
-std::vector<std::string> move_gen::legal_moves_rook() {
-    std::vector<std::string> moves;
+std::vector<board::move> move_gen::legal_moves_rook() {
+    std::vector<board::move> moves;
 
     return moves;
 }
 
 /* ANYONE */
-std::vector<std::string> move_gen::legal_moves_queen() {
-    std::vector<std::string> moves;
+std::vector<board::move> move_gen::legal_moves_queen() {
+    std::vector<board::move> moves;
 
     return moves;
 }
 
 /* SAMUEL */
-std::vector<std::string> move_gen::legal_moves_king() {
-    std::vector<std::string> moves;
+std::vector<board::move> move_gen::legal_moves_king() {
+    std::vector<board::move> moves;
 
     return moves;
 }

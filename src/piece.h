@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <type_traits>
 
-enum class piece : std::uint8_t
+enum class piece : std::int8_t
 {
 	/* Empty board */
 	e_EMPTY,
@@ -34,7 +34,7 @@ inline bool is_void(piece p) { return p == piece::e_VOID; }
 inline bool is_black(piece p) { return p >= piece::e_BLACK_PAWN && p <= piece::e_BLACK_KING; }
 inline bool is_white(piece p) { return p >= piece::e_WHITE_PAWN && p <= piece::e_WHITE_KING; }  
 
-inline std::uint8_t to_underlying(const piece &p)
+inline std::int8_t to_underlying(const piece &p)
 {
 	return static_cast<std::underlying_type<piece>::type>(p);
 }

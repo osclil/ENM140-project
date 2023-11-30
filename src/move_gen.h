@@ -20,6 +20,7 @@ class move_gen {
         move_gen(std::string &FEN , bool whites_turn) : m_board(board::from_fen(FEN)), m_pos({}), m_whites_turn(whites_turn) {};
 
         std::vector<std::string> all_legal_moves();
+        std::vector<board::move> all_possible_moves();
 
     private:
 
@@ -28,18 +29,24 @@ class move_gen {
 	piece m_piece;
         bool m_whites_turn;
 
-        std::string gen_FEN(std::uint8_t row_to, std::uint8_t col_to);
-        bool square_is_empty(std::uint8_t row, std::uint8_t col);
-        bool square_is_enemy(std::uint8_t row, std::uint8_t col);
-        bool square_is_moveable(std::uint8_t row, std::uint8_t col);
+        // std::vector<std::string> gen_FENs(std::vector<board::move> moves);
+        bool square_is_empty(std::int8_t row, std::int8_t col);
+        bool square_is_enemy(std::int8_t row, std::int8_t col);
+        bool square_is_moveable(std::int8_t row, std::int8_t col);
         bool square_is_movable(board::position pos);
 
-        std::vector<std::string> legal_moves_pawn();
-        std::vector<std::string> legal_moves_knight();
-        std::vector<std::string> legal_moves_bishop();
-        std::vector<std::string> legal_moves_rook();
-        std::vector<std::string> legal_moves_queen();
-        std::vector<std::string> legal_moves_king();
+        std::vector<board::move> legal_diagonal_pawn_moves(board::position pos_from);
+        std::vector<board::move> legal_moves_pawn();
+        
+        std::vector<board::move> legal_moves_knight();
+        
+        std::vector<board::move> legal_moves_bishop();
+        
+        std::vector<board::move> legal_moves_rook();
+        
+        std::vector<board::move> legal_moves_queen();
+        
+        std::vector<board::move> legal_moves_king();
 };
 
 #endif /* move_gen.h */

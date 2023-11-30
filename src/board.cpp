@@ -14,8 +14,8 @@
 /* Deduce width and height from the FEN and returns a board object */
 board board::from_fen(const std::string &FEN)
 {
-	std::uint8_t width = 0;
-	std::uint8_t height = FEN.size() > 0 ? 1 : 0;
+	std::int8_t width = 0;
+	std::int8_t height = FEN.size() > 0 ? 1 : 0;
 
 	bool first_row = true;
 
@@ -31,7 +31,7 @@ board board::from_fen(const std::string &FEN)
 		if (first_row)
 		{
 			if (std::isdigit(c))
-				width += static_cast<std::uint8_t>(c - '0');
+				width += static_cast<std::int8_t>(c - '0');
 			else
       				width++;
 		}
@@ -152,8 +152,8 @@ void board::load_fen(const std::string &FEN)
 			case 'k':
 				m_board[current_index++] = piece::e_BLACK_KING;
 				m_black_king_pos = {
-					static_cast<std::uint8_t>(current_index / m_width),
-					static_cast<std::uint8_t>(current_index % m_width)
+					static_cast<std::int8_t>(current_index / m_width),
+					static_cast<std::int8_t>(current_index % m_width)
 				};
 				break;
 			case 'P':
@@ -174,8 +174,8 @@ void board::load_fen(const std::string &FEN)
 			case 'K':
 				m_board[current_index++] = piece::e_WHITE_KING;
 				m_white_king_pos = {
-					static_cast<std::uint8_t>(current_index / m_width),
-					static_cast<std::uint8_t>(current_index % m_width)
+					static_cast<std::int8_t>(current_index / m_width),
+					static_cast<std::int8_t>(current_index % m_width)
 				};
 				break;
 			/* TODO, check error */
