@@ -3,6 +3,7 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include <string>
 #include <cstdint>
 #include <type_traits>
 

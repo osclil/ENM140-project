@@ -48,8 +48,9 @@ int main()
 	/* This FEN should have 23 moves to make for black and 38 for white */
 	std::string FEN_TESTING = "rnbqk1rQ/4bn2/pppp1p2/4R2B/B3p1pp/PPPPPPPP/8/1NB1K1NR";
 
-	move_gen mg = move_gen(FEN_CHECKMATE, true);
-	std::vector<std::string> num_legal_moves_test_w = mg.all_legal_moves();
+	board b = board::from_fen(FEN_TESTING);
+	move_gen mg = move_gen(&b, true);
+	std::vector<board::move> num_legal_moves_test_w = mg.all_legal_moves();
 
 	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
 

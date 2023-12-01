@@ -19,12 +19,12 @@ std::vector<board::move> move_gen::all_possible_moves() {
 
     // Loop all over all squares on the board
     // TODO: Implement so we don't have to loop over empty squares
-    for (std::int8_t i = 0; i < m_board.get_height() * m_board.get_width(); i++) {
-        m_piece = m_board.at(i);
+    for (std::int8_t i = 0; i < m_board->get_height() * m_board->get_width(); i++) {
+        m_piece = m_board->at(i);
 
         // If the square is a piece of the same color as the player whose turn it is, generate moves for it
         if ((m_whites_turn && is_white(m_piece)) || (!m_whites_turn && is_black(m_piece))) {
-            m_pos = m_board.to_pos(i);
+            m_pos = m_board->to_pos(i);
 
             std::vector<board::move> piece_moves;
 
@@ -100,7 +100,7 @@ bool move_gen::in_check() {
     bool king_captured = false;
 
     for (auto counter_move : counter_moves) {
-        if (m_board.at(counter_move.to.row, counter_move.to.col) == king) {
+        if (m_board->at(counter_move.to.row, counter_move.to.col) == king) {
             king_captured = true;
             break;
         }
@@ -117,10 +117,10 @@ int move_gen::evaluate() {
     }
 }
 
-std::vector<std::string> move_gen::all_legal_moves() {
-    std::vector<std::string> FENs;
+std::vector<board::move> move_gen::all_legal_moves() {
+    // std::vector<std::string> FENs;
     std::vector<board::move> all_possible_moves = this->all_possible_moves();
-
+    std::vector<board::move> legal_moves;
     /*
     std::unordered_map<piece, int> piece_count = {
         {piece::e_BLACK_PAWN, 0},
@@ -139,21 +139,21 @@ std::vector<std::string> move_gen::all_legal_moves() {
     */
 
     for (auto move : all_possible_moves) {
-        piece piece_from = m_board.at(move.from.row, move.from.col);
-        piece piece_to = m_board.at(move.to.row, move.to.col);
+        piece piece_from = m_board->at(move.from.row, move.from.col);
+        piece piece_to = m_board->at(move.to.row, move.to.col);
 
         // Temporarily move piece
-        m_board.at(move.from.row, move.from.col) = piece::e_EMPTY;
-        m_board.at(move.to.row, move.to.col) = piece_from;
+        m_board->at(move.from.row, move.from.col) = piece::e_EMPTY;
+        m_board->at(move.to.row, move.to.col) = piece_from;
 
         if (!in_check()) {
-            FENs.push_back(m_board.to_fen());
+            legal_moves.push_back(move);
             //piece_count[piece_from]++;
         }
 
         // Move piece back
-        m_board.at(move.from.row, move.from.col) = piece_from;
-        m_board.at(move.to.row, move.to.col) = piece_to;
+        m_board->at(move.from.row, move.from.col) = piece_from;
+        m_board->at(move.to.row, move.to.col) = piece_to;
     }
 
     /*
@@ -164,11 +164,11 @@ std::vector<std::string> move_gen::all_legal_moves() {
     std::cout << std::endl;
     */
 
-    return FENs;
+    return legal_moves;
 }
 
 bool move_gen::square_is_empty(std::int8_t row, std::int8_t col) {
-    return m_board.at(row, col) == piece::e_EMPTY;
+    return m_board->at(row, col) == piece::e_EMPTY;
 }
 
 bool move_gen::square_is_empty(board::position pos) {
@@ -176,7 +176,7 @@ bool move_gen::square_is_empty(board::position pos) {
 }
 
 bool move_gen::square_is_enemy(std::int8_t row, std::int8_t col) {
-    return (m_whites_turn && is_black(m_board.at(row, col))) || (!m_whites_turn && is_white(m_board.at(row, col)));
+    return (m_whites_turn && is_black(m_board->at(row, col))) || (!m_whites_turn && is_white(m_board->at(row, col)));
 }
 
 bool move_gen::square_is_moveable(std::int8_t row, std::int8_t col) {
@@ -234,7 +234,7 @@ std::vector<board::move> move_gen::check_file() {
     to_pos.col = m_pos.col;
 
     // Check file up
-    for (std::int8_t i = m_pos.row + 1; i < m_board.get_height(); ++i) {
+    for (std::int8_t i = m_pos.row + 1; i < m_board->get_height(); ++i) {
         to_pos.row = i;
 
         if (square_is_movable(to_pos)) {
@@ -269,7 +269,7 @@ std::vector<board::move> move_gen::check_rank() {
     to_pos.row = m_pos.row;
 
     // Check rank right
-    for (std::int8_t i = m_pos.col + 1; i < m_board.get_width(); ++i) {
+    for (std::int8_t i = m_pos.col + 1; i < m_board->get_width(); ++i) {
         to_pos.col = i;
 
         if (square_is_movable(to_pos)) {
@@ -302,7 +302,7 @@ std::vector<board::move> move_gen::check_diagonal() {
     board::position to_pos;
 
     // Check diagonal up-right
-    for (std::int8_t i = 1; m_pos.row + i < m_board.get_height() && m_pos.col + i < m_board.get_width(); ++i) {
+    for (std::int8_t i = 1; m_pos.row + i < m_board->get_height() && m_pos.col + i < m_board->get_width(); ++i) {
         to_pos.row = m_pos.row + i;
         to_pos.col = m_pos.col + i;
 
@@ -316,7 +316,7 @@ std::vector<board::move> move_gen::check_diagonal() {
     }
 
     // Check diagonal up-left
-    for (std::int8_t i = 1; m_pos.row + i < m_board.get_height() && m_pos.col - i >= 0; ++i) {
+    for (std::int8_t i = 1; m_pos.row + i < m_board->get_height() && m_pos.col - i >= 0; ++i) {
         to_pos.row = m_pos.row + i;
         to_pos.col = m_pos.col - i;
 
@@ -330,7 +330,7 @@ std::vector<board::move> move_gen::check_diagonal() {
     }
 
     // Check diagonal down-right
-    for (std::int8_t i = 1; m_pos.row - i >= 0 && m_pos.col + i < m_board.get_width(); ++i) {
+    for (std::int8_t i = 1; m_pos.row - i >= 0 && m_pos.col + i < m_board->get_width(); ++i) {
         to_pos.row = m_pos.row - i;
         to_pos.col = m_pos.col + i;
 
