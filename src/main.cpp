@@ -54,6 +54,12 @@ int main()
 
 	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
 
+	b.move_piece(num_legal_moves_test_w[0]);
+	mg.change_turn();
+	std::vector<board::move> num_legal_moves_test_b = mg.all_legal_moves();
+	std::cout << "FEN after first move: " << b.to_fen() << std::endl;
+	std::cout << "Number of legal moves for black: " << num_legal_moves_test_b.size() << std::endl;
+
 	std::cout << "Outcome: " << mg.evaluate() << std::endl;
 
 	return 0;

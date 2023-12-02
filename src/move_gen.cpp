@@ -408,3 +408,7 @@ std::vector<board::move> move_gen::legal_moves_king() {
     return moves;
 }
 
+
+void move_gen::change_turn() {
+    m_whites_turn = !m_whites_turn;
+}

@@ -20,6 +20,7 @@ class move_gen {
         move_gen(board* b , bool whites_turn) : m_board(b), m_pos({}), m_whites_turn(whites_turn) {};
         std::vector<board::move> all_legal_moves();
         int evaluate();
+        void change_turn();
 
     private:
         bool in_check();
