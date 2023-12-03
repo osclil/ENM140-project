@@ -105,6 +105,17 @@ public:
 			m_black_king_pos = m.to;
 	}
 
+	void undo_move(const move &m) noexcept
+	{
+		at(m.from.row, m.from.col) = at(m.to.row, m.to.col);
+		at(m.to.row, m.to.col) = piece::e_VOID;
+
+		if (at(m.from.row, m.from.col) == piece::e_WHITE_KING)
+			m_white_king_pos = m.from;
+		else if (at(m.from.row, m.from.col) == piece::e_BLACK_KING)
+			m_black_king_pos = m.from;
+	}
+
 private:
 
 	void load_fen(const std::string &);

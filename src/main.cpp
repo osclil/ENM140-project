@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "move_gen.h"
+#include "minmax_impl.h"
 
 void print_board(const board &b)
 {
@@ -60,7 +61,19 @@ int main()
 	std::cout << "FEN after first move: " << b.to_fen() << std::endl;
 	std::cout << "Number of legal moves for black: " << num_legal_moves_test_b.size() << std::endl;
 
+	b.undo_move(num_legal_moves_test_w[0]);
+	mg.change_turn();
+	std::cout << "FEN after undoing first move: " << b.to_fen() << std::endl;
+	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
+
 	std::cout << "Outcome: " << mg.evaluate() << std::endl;
+
+
+	std::string MINMAX_TEST = "k/q/1/1/1/P/K";
+	board b2 = board::from_fen(MINMAX_TEST);
+	move_gen mg2 = move_gen(&b2, false);
+	MinMax mm(mg2);
+	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, 100, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
 
 	return 0;
 };
