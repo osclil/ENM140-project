@@ -94,21 +94,24 @@ public:
 	std::int8_t get_width() const noexcept { return m_width; }
 	std::int8_t get_height() const noexcept { return m_height; }
 
-	void move_piece(const move &m) noexcept
+	piece move_piece(const move &m) noexcept
 	{
+		piece p = at(m.to.row, m.to.col);
 		at(m.to.row, m.to.col) = at(m.from.row, m.from.col);
-		at(m.from.row, m.from.col) = piece::e_VOID;
+		at(m.from.row, m.from.col) = piece::e_EMPTY;
 
 		if (at(m.to.row, m.to.col) == piece::e_WHITE_KING)
 			m_white_king_pos = m.to;
 		else if (at(m.to.row, m.to.col) == piece::e_BLACK_KING)
 			m_black_king_pos = m.to;
+
+		return p;
 	}
 
-	void undo_move(const move &m) noexcept
+	void undo_move(const move &m, piece p) noexcept
 	{
 		at(m.from.row, m.from.col) = at(m.to.row, m.to.col);
-		at(m.to.row, m.to.col) = piece::e_VOID;
+		at(m.to.row, m.to.col) = p;
 
 		if (at(m.from.row, m.from.col) == piece::e_WHITE_KING)
 			m_white_king_pos = m.from;

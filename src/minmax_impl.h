@@ -21,10 +21,10 @@ int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
         int maxEval = std::numeric_limits<int>::min();
 
         for (board::move move : mg.all_legal_moves()) {
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxSimple(state, depth - 1, false);
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             maxEval = std::max(maxEval, eval);
         }
@@ -35,10 +35,10 @@ int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
         int minEval = std::numeric_limits<int>::max();
 
         for (board::move move : mg.all_legal_moves()) {
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxSimple(state, depth - 1, true);
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             minEval = std::min(minEval, eval);
         }
@@ -49,8 +49,6 @@ int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
 
 // Generic MinMax algorithm implementation with alpha-beta pruning
 int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int alpha, int beta) {
-    std::cout<<state.to_fen()<<std::endl;
-    std::cout<<mg.all_legal_moves().size()<<std::endl;
     checkDraw[state.to_fen()]++;
 
     if (depth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
@@ -60,10 +58,10 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
         int maxEval = std::numeric_limits<int>::min();
 
         for (board::move move : mg.all_legal_moves()) {
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxAlphaBeta(state, depth - 1, false, alpha, beta);
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             maxEval = std::max(maxEval, eval);
             alpha = std::max(alpha, eval);
@@ -77,10 +75,10 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
         int minEval = std::numeric_limits<int>::max();
 
         for (board::move move : mg.all_legal_moves()) {
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxAlphaBeta(state, depth - 1, true, alpha, beta);
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             minEval = std::min(minEval, eval);
             beta = std::min(beta, eval);
@@ -101,10 +99,10 @@ std::pair<int, board::move> MinMax::findBestMove(board& state, int depth, bool m
         bestMove = std::make_pair(std::numeric_limits<int>::min(), legalMoves[0]);
 
         for (board::move move : legalMoves){
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxAlphaBeta(state, depth - 1, !maximizingPlayer, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             if (eval > bestMove.first) {
                 bestMove.first = eval;
@@ -116,10 +114,10 @@ std::pair<int, board::move> MinMax::findBestMove(board& state, int depth, bool m
         bestMove = std::make_pair(std::numeric_limits<int>::max(), legalMoves[0]);
 
         for (board::move move : legalMoves){
-            state.move_piece(move);
+            piece p = state.move_piece(move);
             mg.change_turn();
             int eval = minmaxAlphaBeta(state, depth - 1, !maximizingPlayer, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-            state.undo_move(move);
+            state.undo_move(move, p);
             mg.change_turn();
             if (eval < bestMove.first) {
                 bestMove.first = eval;

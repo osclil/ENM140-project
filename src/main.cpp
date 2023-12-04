@@ -42,36 +42,36 @@ void test_board(const std::string &fen)
 
 int main()
 {
-	std::string FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-	std::string FEN_EXAMPLE1 = "rkr/ppp/3/PPP/RKR"; /* The 5x3 example shown */
-	std::string FEN_CHECKMATE = "K7/1q6/2k5/8/8/8/8/8";
+	// std::string FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+	// std::string FEN_EXAMPLE1 = "rkr/ppp/3/PPP/RKR"; /* The 5x3 example shown */
+	// std::string FEN_CHECKMATE = "K7/1q6/2k5/8/8/8/8/8";
 
-	/* This FEN should have 23 moves to make for black and 38 for white */
-	std::string FEN_TESTING = "rnbqk1rQ/4bn2/pppp1p2/4R2B/B3p1pp/PPPPPPPP/8/1NB1K1NR";
+	// /* This FEN should have 23 moves to make for black and 38 for white */
+	// std::string FEN_TESTING = "rnbqk1rQ/4bn2/pppp1p2/4R2B/B3p1pp/PPPPPPPP/8/1NB1K1NR";
 
-	board b = board::from_fen(FEN_TESTING);
-	move_gen mg = move_gen(&b, true);
-	std::vector<board::move> num_legal_moves_test_w = mg.all_legal_moves();
+	// board b = board::from_fen(FEN_TESTING);
+	// move_gen mg = move_gen(&b, true);
+	// std::vector<board::move> num_legal_moves_test_w = mg.all_legal_moves();
 
-	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
+	// std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
 
-	b.move_piece(num_legal_moves_test_w[0]);
-	mg.change_turn();
-	std::vector<board::move> num_legal_moves_test_b = mg.all_legal_moves();
-	std::cout << "FEN after first move: " << b.to_fen() << std::endl;
-	std::cout << "Number of legal moves for black: " << num_legal_moves_test_b.size() << std::endl;
+	// b.move_piece(num_legal_moves_test_w[0]);
+	// mg.change_turn();
+	// std::vector<board::move> num_legal_moves_test_b = mg.all_legal_moves();
+	// std::cout << "FEN after first move: " << b.to_fen() << std::endl;
+	// std::cout << "Number of legal moves for black: " << num_legal_moves_test_b.size() << std::endl;
 
-	b.undo_move(num_legal_moves_test_w[0]);
-	mg.change_turn();
-	std::cout << "FEN after undoing first move: " << b.to_fen() << std::endl;
-	std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
+	// b.undo_move(num_legal_moves_test_w[0], piece::e_VOID);
+	// mg.change_turn();
+	// std::cout << "FEN after undoing first move: " << b.to_fen() << std::endl;
+	// std::cout << "Number of legal moves for white: " << num_legal_moves_test_w.size() << std::endl;
 
-	std::cout << "Outcome: " << mg.evaluate() << std::endl;
+	// std::cout << "Outcome: " << mg.evaluate() << std::endl;
 
 
-	std::string MINMAX_TEST = "k/q/1/1/1/P/K";
+	std::string MINMAX_TEST = "rk1/pp1/PP1/RK1";
 	board b2 = board::from_fen(MINMAX_TEST);
-	move_gen mg2 = move_gen(&b2, false);
+	move_gen mg2 = move_gen(&b2, true);
 	MinMax mm(mg2);
 	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, 100, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
 
