@@ -21,14 +21,14 @@ class move_gen {
         std::vector<board::move> all_legal_moves();
         int evaluate();
         void change_turn();
-
-    private:
-        bool in_check();
-        std::vector<board::move> all_possible_moves();
         board* m_board;
         board::position m_pos;
         piece m_piece;
         bool m_whites_turn;
+
+    private:
+        bool in_check();
+        std::vector<board::move> all_possible_moves();
         bool square_is_empty(std::int8_t row, std::int8_t col);
         bool square_is_empty(board::position pos);
         bool square_is_enemy(std::int8_t row, std::int8_t col);

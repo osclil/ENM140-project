@@ -68,12 +68,28 @@ int main()
 
 	// std::cout << "Outcome: " << mg.evaluate() << std::endl;
 
-
-	std::string MINMAX_TEST = "rk1/pp1/PP1/RK1";
+	std::string MINMAX_TEST; 
+	int depth;
+	// MINMAX_TEST = "k/p/P/K";
+	std::cout << "FEN: ";
+	std::cin >> MINMAX_TEST;
+	std::cout << "Depth: ";
+	std::cin >> depth;
 	board b2 = board::from_fen(MINMAX_TEST);
 	move_gen mg2 = move_gen(&b2, true);
 	MinMax mm(mg2);
-	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, 100, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
+	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, 10000, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
+	// int i = 20;
+	// while (i--)
+	// {
+	// 	std::cout << "Current board: " << std::endl;
+	// 	print_board(b2);
+	// 	std::pair<int, board::move> best_move = mm.findBestMove(b2, 100, mg2.m_whites_turn);
+	// 	std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
+	// 	std::cout << "Current evaluation: " << best_move.first << std::endl;
+	// 	b2.move_piece(best_move.second);
+	// 	mg2.change_turn();
+	// }
 
 	return 0;
 };

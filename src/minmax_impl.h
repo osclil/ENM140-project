@@ -49,6 +49,7 @@ int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
 
 // Generic MinMax algorithm implementation with alpha-beta pruning
 int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int alpha, int beta) {
+    // std::cout << state.to_fen() << " " << depth << std::endl;
     checkDraw[state.to_fen()]++;
 
     if (depth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
@@ -94,14 +95,18 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
 std::pair<int, board::move> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer) {
     std::vector<board::move> legalMoves = mg.all_legal_moves();
     std::pair<int, board::move> bestMove;
+    // checkDraw[state.to_fen()]++;
 
-    if (maximizingPlayer){
+    if (depth == 0 || checkDraw[state.to_fen()]>1 || legalMoves.size() == 0)
+        return std::make_pair(mg.evaluate(), board::move {});
+
+    if (mg.m_whites_turn){
         bestMove = std::make_pair(std::numeric_limits<int>::min(), legalMoves[0]);
 
         for (board::move move : legalMoves){
             piece p = state.move_piece(move);
             mg.change_turn();
-            int eval = minmaxAlphaBeta(state, depth - 1, !maximizingPlayer, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            int eval = minmaxAlphaBeta(state, depth - 1, false, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
             state.undo_move(move, p);
             mg.change_turn();
             if (eval > bestMove.first) {
@@ -116,7 +121,7 @@ std::pair<int, board::move> MinMax::findBestMove(board& state, int depth, bool m
         for (board::move move : legalMoves){
             piece p = state.move_piece(move);
             mg.change_turn();
-            int eval = minmaxAlphaBeta(state, depth - 1, !maximizingPlayer, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            int eval = minmaxAlphaBeta(state, depth - 1, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
             state.undo_move(move, p);
             mg.change_turn();
             if (eval < bestMove.first) {
