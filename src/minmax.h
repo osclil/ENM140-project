@@ -12,7 +12,7 @@ public:
     MinMax(move_gen& mg) : mg(mg) {};
     int minmaxSimple(board& state, int depth, bool maximizingPlayer);
     int minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int alpha, int beta);
-    std::pair<int, board::move> findBestMove(board& state, int depth, bool maximizingPlayer);
+    std::pair<bool, std::pair<int, board::move>> findBestMove(board& state, int depth, bool maximizingPlayer);
     std::unordered_map<std::string, int> checkDraw;
     move_gen mg;
 };
