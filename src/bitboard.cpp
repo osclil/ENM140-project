@@ -63,9 +63,126 @@ void Bitboard::init_leaper_attacks() {
 }
 
 // Slider Functions
+uint64_t Bitboard::init_bishop_attacks(uint8_t square) {
+    uint64_t attacks = 0ULL;
+
+    int x = square % 8;
+    int y = square / 8;
+
+    for (int i = x+1, j = y+1; i < 8 && j < 8; i++, j++) {
+        set_bit(attacks, j*8+i);
+    }
+
+    for (int i = x-1, j = y+1; i >= 0 && j < 8; i--, j++) {
+        set_bit(attacks ,j*8+i);
+    }
+
+    for (int i = x+1, j = y-1; i < 8 && j >= 0; i++, j--) {
+        set_bit(attacks, j*8+i);
+    }
+
+    for (int i = x-1, j = y-1; i >= 0 && j >= 0; i--, j--) {
+        set_bit(attacks, j*8+i);
+    }
+
+    return attacks & m_allowed_squares;
+}
+
+uint64_t Bitboard::init_rook_attacks(uint8_t square) {
+    uint64_t attacks = 0ULL;
+
+    int x = square % 8;
+    int y = square / 8;
+    
+    for (int i = x+1; i < 8; i++) {
+        set_bit(attacks, y*8+i);
+    }
+
+    for (int i = x-1; i >= 0; i--) {
+        set_bit(attacks, y*8+i);
+    }
+
+    for (int i = y+1; i < 8; i++) {
+        set_bit(attacks, i*8+x);
+    }
+
+    for (int i = y-1; i >= 0; i--) {
+        set_bit(attacks, i*8+x);
+    }
+
+    return attacks & m_allowed_squares;
+}
+
+void Bitboard::init_slider_attacks() {
+    for (uint8_t i = 0; i < 64; i++) {
+        bishop_attacks[i] = init_bishop_attacks(i);
+        rook_attacks[i] = init_rook_attacks(i);
+    }
+}
+
+// Attack with blockers
+uint64_t Bitboard::bishop_attacks_with_blockers(uint8_t square, uint64_t blockers) {
+    uint64_t attacks = 0ULL;
+
+    int x = square % 8;
+    int y = square / 8;
+
+    for (int i = x+1, j = y+1; i < 8 && j < 8; i++, j++) {
+        set_bit(attacks, j*8+i);
+        if (get_bit(blockers, j*8+i)) break;
+    }
+
+    for (int i = x-1, j = y+1; i >= 0 && j < 8; i--, j++) {
+        set_bit(attacks ,j*8+i);
+        if (get_bit(blockers, j*8+i)) break;
+    }
+
+    for (int i = x+1, j = y-1; i < 8 && j >= 0; i++, j--) {
+        set_bit(attacks, j*8+i);
+        if (get_bit(blockers, j*8+i)) break;
+    }
+
+    for (int i = x-1, j = y-1; i >= 0 && j >= 0; i--, j--) {
+        set_bit(attacks, j*8+i);
+        if (get_bit(blockers, j*8+i)) break;
+    }
+
+    return attacks & m_allowed_squares;
+}
+
+uint64_t Bitboard::rook_attacks_with_blockers(uint8_t square, uint64_t blockers) {
+    uint64_t attacks = 0ULL;
+
+    int x = square % 8;
+    int y = square / 8;
+    
+    for (int i = x+1; i < 8; i++) {
+        set_bit(attacks, y*8+i);
+        if (get_bit(blockers, y*8+i)) break;
+    }
+
+    for (int i = x-1; i >= 0; i--) {
+        set_bit(attacks, y*8+i);
+        if (get_bit(blockers, y*8+i)) break;
+    }
+
+    for (int i = y+1; i < 8; i++) {
+        set_bit(attacks, i*8+x);
+        if (get_bit(blockers, i*8+x)) break;
+    }
+
+    for (int i = y-1; i >= 0; i--) {
+        set_bit(attacks, i*8+x);
+        if (get_bit(blockers, i*8+x)) break;
+    }
+
+    return attacks & m_allowed_squares;
+}
+
 
 int main(){
     Bitboard b(8, 8);
     b.init_leaper_attacks();
-    b.print_bitboard(b.king_attacks[9]);
+    b.init_slider_attacks();
+    b.print_bitboard(b.rook_attacks[3]);
 }

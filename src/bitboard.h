@@ -155,6 +155,7 @@ public:
 
     // Initialization functions
     void init_leaper_attacks();
+    void init_slider_attacks();
 
     void print_bitboard(uint64_t bitboard) {
         for (int i = 7; i >= 0; i--) {
@@ -179,12 +180,18 @@ public:
     uint64_t m_allowed_ranks;
     uint64_t m_allowed_squares;
 
+    // Attack with blockers
+    uint64_t bishop_attacks_with_blockers(uint8_t square, uint64_t blockers);
+    uint64_t rook_attacks_with_blockers(uint8_t square, uint64_t blockers);
+
 private:
    
     // Attack functions
     uint64_t init_pawn_attacks(Color color, uint8_t square);
     uint64_t init_knight_attacks(uint8_t square);
     uint64_t init_king_attacks(uint8_t square);
+    uint64_t init_bishop_attacks(uint8_t square);
+    uint64_t init_rook_attacks(uint8_t square);
 };
 
 #endif // BITBOARD_H
