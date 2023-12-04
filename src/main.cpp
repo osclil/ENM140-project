@@ -96,5 +96,11 @@ int main()
 		mg2.change_turn();
 	}
 
+	// Depth limit test
+	if (mm.depth_limit_reached)
+		std::cout << "Depth limit reached!" << std::endl;
+	else
+		std::cout << "Depth limit not reached!" << std::endl;
+
 	return 0;
 };

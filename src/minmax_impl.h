@@ -14,6 +14,9 @@
 int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
     checkDraw[state.to_fen()]++;
 
+    if (depth == 0)
+        depth_limit_reached = true;
+
     if (depth == 0 ||  checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
         return mg.evaluate();
 
@@ -51,6 +54,9 @@ int MinMax::minmaxSimple(board& state, int depth, bool maximizingPlayer) {
 int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int alpha, int beta) {
     // std::cout << state.to_fen() << " " << depth << std::endl;
     checkDraw[state.to_fen()]++;
+
+    if (depth == 0)
+        depth_limit_reached = true;
 
     if (depth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
         return mg.evaluate();
@@ -95,6 +101,9 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
 std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer) {
     checkDraw[state.to_fen()]++;
     mg.m_whites_turn = maximizingPlayer;
+
+    if (depth == 0)
+        depth_limit_reached = true;
 
     if (depth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
         return {false, std::make_pair(mg.evaluate(), board::move())};
