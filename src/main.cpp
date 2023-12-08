@@ -75,6 +75,13 @@ int main()
 	std::cin >> MINMAX_TEST;
 	std::cout << "Depth: ";
 	std::cin >> depth;
+	std::cout << std::endl;
+
+	std::cout << "White wins if evaluation is between " << 100000 - depth << " to 100000" << std::endl;
+	std::cout << "Black wins if evaluation is between " << -100000 - depth << " to -100000" << std::endl;
+	std::cout << "Draw if evaluation is between " << -depth << " to 0" << std::endl;
+	std::cout << std::endl;
+
 	board b2 = board::from_fen(MINMAX_TEST);
 	move_gen mg2 = move_gen(&b2, true);
 	MinMax mm(mg2);
@@ -82,13 +89,23 @@ int main()
 	std::cout << "Board: " << std::endl;
 	print_board(b2);
 
-	// auto p = mm.comparePruning(b2, depth, true);
-	// std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
-	// std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
-	// std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+	int eval = mm.minmaxSimple(b2, depth, true, 0);
+	std::cout << "Evaluation: " << eval << std::endl;
+	std::cout << mm.result(eval, depth) << std::endl;
+	mm.clearall();
 
-	// mm.checkDraw.clear();
-	// mm.depth_limit_reached = false;
+	eval = mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
+	std::cout << "Evaluation: " << eval << std::endl;
+	std::cout << mm.result(eval, depth) << std::endl;
+	std::cout << "Depth limit: " << mm.depth_limit << std::endl;
+	mm.clearall();
+
+	auto p = mm.comparePruning(b2, depth, true);
+	std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
+	std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
+	std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+	mm.clearall();
+
 	// auto nodes = mm.getNodesAtDepth(b2, depth, true);
 	// std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
 	// if (mm.isDepthLimitReached())
@@ -96,24 +113,24 @@ int main()
 	// else
 	// 	std::cout << "Depth limit not reached! All games ended before." << std::endl;
 	
-	int i = 20;
-	std::unordered_map<std::string, int> stateTable;
-	while (i--)
-	{
-		mg2 = move_gen(&b2, mg2.m_whites_turn);
-		std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true, stateTable);
-		std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
-		std::cout << "Current evaluation: " << best_move.second.first << std::endl;
-		if (!best_move.first){
-			std::cout << b2.to_fen() << std::endl;
-			std::cout << "No legal moves!" << std::endl;
-			break;
-		}
-		b2.move_piece(best_move.second.second);
-		std::cout << "Board: " << std::endl;
-		print_board(b2);
-		mg2.change_turn();
-	}
+	// int i = 20;
+	// std::unordered_map<std::string, int> stateTable;
+	// while (i--)
+	// {
+	// 	mg2 = move_gen(&b2, mg2.m_whites_turn);
+	// 	std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true, stateTable);
+	// 	std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
+	// 	std::cout << "Current evaluation: " << best_move.second.first << std::endl;
+	// 	if (!best_move.first){
+	// 		std::cout << b2.to_fen() << std::endl;
+	// 		std::cout << "No legal moves!" << std::endl;
+	// 		break;
+	// 	}
+	// 	b2.move_piece(best_move.second.second);
+	// 	std::cout << "Board: " << std::endl;
+	// 	print_board(b2);
+	// 	mg2.change_turn();
+	// }
 
 	// Depth limit test
 	if (mm.isDepthLimitReached())

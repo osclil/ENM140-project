@@ -110,11 +110,10 @@ bool move_gen::in_check() {
 }
 
 int move_gen::evaluate() {
-    if (in_check()) {
-        return (m_whites_turn) ? -1 : 1;
-    } else {
+    if (in_check())
+        return (m_whites_turn) ? -100000 : 100000;
+    else
         return 0;
-    }
 }
 
 std::vector<board::move> move_gen::all_legal_moves() {

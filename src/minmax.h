@@ -4,6 +4,7 @@
 #include <utility> // std::pair
 #include <unordered_map> // std::unordered_map
 #include <chrono> // std::chrono
+#include <string> // std::string
 #include "board.h"
 #include "move_gen.h"
 
@@ -12,16 +13,19 @@ class MinMax {
 public:
     MinMax(move_gen& mg) : mg(mg) {};
     
-    int minmaxSimple(board& state, int depth, bool maximizingPlayer);
-    int minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int alpha, int beta);
-    std::pair<bool, std::pair<int, board::move>> findBestMove(board& state, int depth, bool maximizingPlayer, bool alpha_beta, std::unordered_map<std::string, int>& stateTable);
-    std::pair<std::chrono::duration<double>, std::chrono::duration<double>> comparePruning(board& state, int depth, bool maximizingPlayer);
-    long long int getNodesAtDepth(board& state, int depth, bool maximizingPlayer);
+    int minmaxSimple(board& state, int maxDepth, bool maximizingPlayer, int depth);
+    int minmaxAlphaBeta(board& state, int maxDepth, bool maximizingPlayer, int alpha, int beta, int depth);
+    std::pair<bool, std::pair<int, board::move>> findBestMove(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, std::unordered_map<std::string, int>& stateTable);
+    std::pair<std::chrono::duration<double>, std::chrono::duration<double>> comparePruning(board& state, int maxDepth, bool maximizingPlayer);
+    long long int getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer);
+    std::string result(int eval, int maxDepth);
     bool isDepthLimitReached() { return depth_limit_reached; };
+    void clearall() { checkDraw.clear(); depth_limit_reached = false; depth_limit = 0; };
     
     std::unordered_map<std::string, int> checkDraw;
     move_gen mg;
     bool depth_limit_reached = false;
+    int depth_limit = 0;
 };
 
 #endif // MINMAX_H
