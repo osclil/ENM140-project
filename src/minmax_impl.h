@@ -98,7 +98,7 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
 }
 
 // Generic MinMax with alpha-beta pruning to find best move 
-std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer) {
+std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer, bool alpha_beta) {
     checkDraw[state.to_fen()]++;
     mg.m_whites_turn = maximizingPlayer;
 
@@ -115,7 +115,11 @@ std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, 
         for (board::move move : mg.all_legal_moves()) {
             piece p = state.move_piece(move);
             mg.change_turn();
-            int eval = minmaxAlphaBeta(state, depth - 1, false, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            int eval;
+            if (alpha_beta)
+                eval = minmaxAlphaBeta(state, depth - 1, false, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            else 
+                eval = minmaxSimple(state, depth - 1, false);
             state.undo_move(move, p);
             mg.change_turn();
             if (eval > maxEval) {
@@ -133,7 +137,11 @@ std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, 
         for (board::move move : mg.all_legal_moves()) {
             piece p = state.move_piece(move);
             mg.change_turn();
-            int eval = minmaxAlphaBeta(state, depth - 1, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            int eval;
+            if (alpha_beta)
+                eval = minmaxAlphaBeta(state, depth - 1, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+            else 
+                eval = minmaxSimple(state, depth - 1, true);
             state.undo_move(move, p);
             mg.change_turn();
             if (eval < minEval) {

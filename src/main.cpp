@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <chrono>
 
 #include "move_gen.h"
 #include "minmax_impl.h"
@@ -78,23 +79,37 @@ int main()
 	board b2 = board::from_fen(MINMAX_TEST);
 	move_gen mg2 = move_gen(&b2, true);
 	MinMax mm(mg2);
-	// std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
-	int i = 20;
-	while (i--)
-	{
-		mg2 = move_gen(&b2, mg2.m_whites_turn);
-		std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn);
-		std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
-		std::cout << "Current evaluation: " << best_move.second.first << std::endl;
-		if (!best_move.first){
-			std::cout << "No legal moves!" << std::endl;
-			break;
-		}
-		b2.move_piece(best_move.second.second);
-		std::cout << "Board: " << std::endl;
-		print_board(b2);
-		mg2.change_turn();
-	}
+
+	std::cout << "Board: " << std::endl;
+	print_board(b2);
+
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
+	std::cout << "Evaluation: " << mm.minmaxSimple(b2, depth, true) << std::endl;
+	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+
+
+	std::cout << "Time by pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+	std::cout << "Time without pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2).count() << "[ms]" << std::endl;
+	// int i = 20;
+	// while (i--)
+	// {
+	// 	mg2 = move_gen(&b2, mg2.m_whites_turn);
+	// 	std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true);
+	// 	std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
+	// 	std::cout << "Current evaluation: " << best_move.second.first << std::endl;
+	// 	if (!best_move.first){
+	// 		std::cout << "No legal moves!" << std::endl;
+	// 		break;
+	// 	}
+	// 	b2.move_piece(best_move.second.second);
+	// 	std::cout << "Board: " << std::endl;
+	// 	print_board(b2);
+	// 	mg2.change_turn();
+	// }
 
 	// Depth limit test
 	if (mm.depth_limit_reached)
