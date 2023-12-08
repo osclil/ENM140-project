@@ -222,7 +222,7 @@ long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer
     }
 
     checkDraw[state.to_fen()]--;
-    return nodes;
+    return nodes+1;
 }
 
 // Get number of nodes at a given depth

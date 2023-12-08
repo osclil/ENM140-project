@@ -103,7 +103,8 @@ int main()
 	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
 	mm.clearall();
 
-	// std::cout << "Number of nodes: " << mm.getNodes(b2, depth, true, true) << std::endl;
+	std::cout << "Number of nodes: " << mm.getNodes(b2, depth, true, true) << std::endl;
+	mm.clearall();
 
 	// auto p = mm.comparePruning(b2, depth, true);
 	// std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
@@ -111,8 +112,8 @@ int main()
 	// std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
 	// mm.clearall();
 
-	// auto nodes = mm.getNodesAtDepth(b2, depth, true);
-	// std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
+	auto nodes = mm.getNodesAtDepth(b2, depth, true);
+	std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
 	// if (mm.isDepthLimitReached())
 	// 	std::cout << "Depth limit reached!" << std::endl;
 	// else
