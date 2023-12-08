@@ -82,42 +82,44 @@ int main()
 	std::cout << "Board: " << std::endl;
 	print_board(b2);
 
-	auto p = mm.comparePruning(b2, depth, true);
-	std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
-	std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
-	std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+	// auto p = mm.comparePruning(b2, depth, true);
+	// std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
+	// std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
+	// std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
 
-	mm.checkDraw.clear();
-	mm.depth_limit_reached = false;
-	auto nodes = mm.getNodesAtDepth(b2, depth, true);
-	std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
-	if (mm.isDepthLimitReached())
-		std::cout << "Depth limit reached!" << std::endl;
-	else
-		std::cout << "Depth limit not reached! All games ended before." << std::endl;
-	
-	// int i = 20;
-	// while (i--)
-	// {
-	// 	mg2 = move_gen(&b2, mg2.m_whites_turn);
-	// 	std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true);
-	// 	std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
-	// 	std::cout << "Current evaluation: " << best_move.second.first << std::endl;
-	// 	if (!best_move.first){
-	// 		std::cout << "No legal moves!" << std::endl;
-	// 		break;
-	// 	}
-	// 	b2.move_piece(best_move.second.second);
-	// 	std::cout << "Board: " << std::endl;
-	// 	print_board(b2);
-	// 	mg2.change_turn();
-	// }
-
-	// Depth limit test
+	// mm.checkDraw.clear();
+	// mm.depth_limit_reached = false;
+	// auto nodes = mm.getNodesAtDepth(b2, depth, true);
+	// std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
 	// if (mm.isDepthLimitReached())
 	// 	std::cout << "Depth limit reached!" << std::endl;
 	// else
-	// 	std::cout << "Depth limit not reached!" << std::endl;
+	// 	std::cout << "Depth limit not reached! All games ended before." << std::endl;
+	
+	int i = 20;
+	std::unordered_map<std::string, int> stateTable;
+	while (i--)
+	{
+		mg2 = move_gen(&b2, mg2.m_whites_turn);
+		std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true, stateTable);
+		std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
+		std::cout << "Current evaluation: " << best_move.second.first << std::endl;
+		if (!best_move.first){
+			std::cout << b2.to_fen() << std::endl;
+			std::cout << "No legal moves!" << std::endl;
+			break;
+		}
+		b2.move_piece(best_move.second.second);
+		std::cout << "Board: " << std::endl;
+		print_board(b2);
+		mg2.change_turn();
+	}
+
+	// Depth limit test
+	if (mm.isDepthLimitReached())
+		std::cout << "Depth limit reached!" << std::endl;
+	else
+		std::cout << "Depth limit not reached!" << std::endl;
 
 	return 0;
 };

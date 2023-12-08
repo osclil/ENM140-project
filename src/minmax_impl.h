@@ -97,15 +97,24 @@ int MinMax::minmaxAlphaBeta(board& state, int depth, bool maximizingPlayer, int 
     }
 }
 
-// Generic MinMax with alpha-beta pruning to find best move 
-std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer, bool alpha_beta) {
-    checkDraw[state.to_fen()]++;
+// Generic MinMax with/without alpha-beta pruning to find best move 
+std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, int depth, bool maximizingPlayer, bool alpha_beta, std::unordered_map<std::string, int>& stateTable) {
+    stateTable[state.to_fen()]++;
+    checkDraw.clear();
+    checkDraw = stateTable;
     mg.m_whites_turn = maximizingPlayer;
 
     if (depth == 0)
-        depth_limit_reached = true;
+        std::cout << "Depth = 0" << std::endl;
 
-    if (depth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
+    if (checkDraw[state.to_fen()]>1){
+        std::cout << "Draw" << std::endl;
+    }
+    
+    if (mg.all_legal_moves().size() == 0)
+        std::cout << "No legal moves" << std::endl;
+
+    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
         return {false, std::make_pair(mg.evaluate(), board::move())};
 
     if (maximizingPlayer) {
