@@ -154,4 +154,19 @@ std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, 
     }
 }
 
+// Compare pruning with and without alpha-beta pruning
+std::pair<std::chrono::duration<double>, std::chrono::duration<double>> MinMax::comparePruning(board& state, int depth, bool maximizingPlayer) {
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    minmaxSimple(state, depth, maximizingPlayer);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    // std::cout << "Time without pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+
+    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
+    minmaxAlphaBeta(state, depth, maximizingPlayer, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+    // std::cout << "Time by pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2).count() << "[ms]" << std::endl;
+
+    return std::make_pair((end - begin), (end2 - begin2));
+}
+
 #endif // MINMAX_IMPL_H

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include <chrono>
 
 #include "move_gen.h"
 #include "minmax_impl.h"
@@ -83,17 +82,11 @@ int main()
 	std::cout << "Board: " << std::endl;
 	print_board(b2);
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	std::cout << "Evaluation: " << mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) << std::endl;
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-	std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
-	std::cout << "Evaluation: " << mm.minmaxSimple(b2, depth, true) << std::endl;
-	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-
-
-	std::cout << "Time by pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
-	std::cout << "Time without pruning = " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2).count() << "[ms]" << std::endl;
+	auto p = mm.comparePruning(b2, depth, true);
+	std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
+	std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
+	std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+	
 	// int i = 20;
 	// while (i--)
 	// {
