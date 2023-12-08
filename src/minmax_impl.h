@@ -169,4 +169,41 @@ std::pair<std::chrono::duration<double>, std::chrono::duration<double>> MinMax::
     return std::make_pair((end - begin), (end2 - begin2));
 }
 
+// Get number of nodes at a given depth
+long long int MinMax::getNodesAtDepth(board& state, int depth, bool maximizingPlayer) {
+    checkDraw[state.to_fen()]++;
+    mg.m_whites_turn = maximizingPlayer;
+
+    if (depth == 0){
+        depth_limit_reached = true;
+        return 1;
+    }
+
+    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
+        return 0;
+
+    long long int nodes = 0;
+
+    if (maximizingPlayer) {
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            nodes += getNodesAtDepth(state, depth - 1, false);
+            state.undo_move(move, p);
+            mg.change_turn();
+        }
+    }
+    else {
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            nodes += getNodesAtDepth(state, depth - 1, true);
+            state.undo_move(move, p);
+            mg.change_turn();
+        }
+    }
+
+    return nodes;
+}
+
 #endif // MINMAX_IMPL_H

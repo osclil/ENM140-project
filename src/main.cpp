@@ -86,6 +86,15 @@ int main()
 	std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
 	std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
 	std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+
+	mm.checkDraw.clear();
+	mm.depth_limit_reached = false;
+	auto nodes = mm.getNodesAtDepth(b2, depth, true);
+	std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
+	if (mm.isDepthLimitReached())
+		std::cout << "Depth limit reached!" << std::endl;
+	else
+		std::cout << "Depth limit not reached! All games ended before." << std::endl;
 	
 	// int i = 20;
 	// while (i--)
@@ -105,10 +114,10 @@ int main()
 	// }
 
 	// Depth limit test
-	if (mm.depth_limit_reached)
-		std::cout << "Depth limit reached!" << std::endl;
-	else
-		std::cout << "Depth limit not reached!" << std::endl;
+	// if (mm.isDepthLimitReached())
+	// 	std::cout << "Depth limit reached!" << std::endl;
+	// else
+	// 	std::cout << "Depth limit not reached!" << std::endl;
 
 	return 0;
 };
