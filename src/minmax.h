@@ -17,6 +17,7 @@ public:
     int minmaxAlphaBeta(board& state, int maxDepth, bool maximizingPlayer, int alpha, int beta, int depth);
     std::pair<bool, std::pair<int, board::move>> findBestMove(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, std::unordered_map<std::string, int>& stateTable);
     std::pair<std::chrono::duration<double>, std::chrono::duration<double>> comparePruning(board& state, int maxDepth, bool maximizingPlayer);
+    long long int getNodes(board &state, int maxDepth, bool maximizingPlayer, bool alpha_beta);
     long long int getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer);
     std::string result(int eval, int maxDepth);
     bool isDepthLimitReached() { return depth_limit_reached; };

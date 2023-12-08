@@ -89,22 +89,27 @@ int main()
 	std::cout << "Board: " << std::endl;
 	print_board(b2);
 
-	int eval = mm.minmaxSimple(b2, depth, true, 0);
-	std::cout << "Evaluation: " << eval << std::endl;
-	std::cout << mm.result(eval, depth) << std::endl;
-	mm.clearall();
+	// int eval = mm.minmaxSimple(b2, depth, true, 0);
+	// std::cout << "Evaluation: " << eval << std::endl;
+	// std::cout << mm.result(eval, depth) << std::endl;
+	// mm.clearall();
 
-	eval = mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	int eval = mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	std::cout << "Evaluation: " << eval << std::endl;
 	std::cout << mm.result(eval, depth) << std::endl;
 	std::cout << "Depth limit: " << mm.depth_limit << std::endl;
+	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
 	mm.clearall();
 
-	auto p = mm.comparePruning(b2, depth, true);
-	std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
-	std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
-	std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
-	mm.clearall();
+	// std::cout << "Number of nodes: " << mm.getNodes(b2, depth, true, true) << std::endl;
+
+	// auto p = mm.comparePruning(b2, depth, true);
+	// std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
+	// std::cout << "Time taken for alpha-beta minmax: " << p.second.count() << std::endl;
+	// std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
+	// mm.clearall();
 
 	// auto nodes = mm.getNodesAtDepth(b2, depth, true);
 	// std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
@@ -133,10 +138,10 @@ int main()
 	// }
 
 	// Depth limit test
-	if (mm.isDepthLimitReached())
-		std::cout << "Depth limit reached!" << std::endl;
-	else
-		std::cout << "Depth limit not reached!" << std::endl;
+	// if (mm.isDepthLimitReached())
+	// 	std::cout << "Depth limit reached!" << std::endl;
+	// else
+	// 	std::cout << "Depth limit not reached!" << std::endl;
 
 	return 0;
 };

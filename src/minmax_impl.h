@@ -19,6 +19,7 @@ int MinMax::minmaxSimple(board& state, int maxDepth, bool maximizingPlayer = tru
 
     if (maxDepth == 0 ||  checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0){
         depth_limit = std::max(depth_limit, depth);
+        checkDraw[state.to_fen()]--;
         return mg.evaluate() - depth;
     }
 
@@ -62,6 +63,7 @@ int MinMax::minmaxAlphaBeta(board& state, int maxDepth, bool maximizingPlayer, i
 
     if (maxDepth == 0 || checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0){
         depth_limit = std::max(depth_limit, depth);
+        checkDraw[state.to_fen()]--;
         return mg.evaluate() - depth;
     }
 
@@ -182,6 +184,47 @@ std::pair<std::chrono::duration<double>, std::chrono::duration<double>> MinMax::
     return std::make_pair((end - begin), (end2 - begin2));
 }
 
+// Get number of nodes in the game
+long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer, bool alpha_beta) {
+    checkDraw[state.to_fen()]++;
+    mg.m_whites_turn = maximizingPlayer;
+
+    if (maxDepth == 0){
+        depth_limit_reached = true;
+        checkDraw[state.to_fen()]--;
+        return 1;
+    }
+
+    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0){
+        checkDraw[state.to_fen()]--;
+        return 0;
+    }
+
+    long long int nodes = 0;
+
+    if (maximizingPlayer) {
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            nodes += getNodes(state, maxDepth - 1, false, alpha_beta);
+            state.undo_move(move, p);
+            mg.change_turn();
+        }
+    }
+    else {
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            nodes += getNodes(state, maxDepth - 1, true, alpha_beta);
+            state.undo_move(move, p);
+            mg.change_turn();
+        }
+    }
+
+    checkDraw[state.to_fen()]--;
+    return nodes;
+}
+
 // Get number of nodes at a given depth
 long long int MinMax::getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer) {
     checkDraw[state.to_fen()]++;
@@ -189,11 +232,14 @@ long long int MinMax::getNodesAtDepth(board& state, int maxDepth, bool maximizin
 
     if (maxDepth == 0){
         depth_limit_reached = true;
+        checkDraw[state.to_fen()]--;
         return 1;
     }
 
-    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
+    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0){
+        checkDraw[state.to_fen()]--;
         return 0;
+    }
 
     long long int nodes = 0;
 
@@ -216,14 +262,15 @@ long long int MinMax::getNodesAtDepth(board& state, int maxDepth, bool maximizin
         }
     }
 
+    checkDraw[state.to_fen()]--;
     return nodes;
 }
 
 // Get result of the game
 std::string MinMax::result(int eval, int maxDepth) {
-    if (eval > 100000-maxDepth)
+    if (eval >= 100000 - maxDepth)
         return "White wins";
-    else if (eval < -100000+maxDepth)
+    else if (eval <= -100000 + maxDepth)
         return "Black wins";
     else
         return "Draw";
