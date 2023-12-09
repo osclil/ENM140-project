@@ -111,7 +111,7 @@ bool move_gen::in_check() {
 
 int move_gen::evaluate() {
     if (in_check())
-        return (m_whites_turn) ? -100000 : 100000;
+        return (m_whites_turn) ? -10000 : 10000;
     else
         return 0;
 }

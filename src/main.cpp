@@ -7,16 +7,6 @@
 #include "move_gen.h"
 #include "minmax_impl.h"
 
-// void print_board(const board &b)
-// {
-// 	for (int i = 0; i < b.get_height(); i++)
-// 	{
-// 		for (int j = 0; j < b.get_width(); j++)
-// 			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
-// 		std::cout << std::endl;
-// 	}
-// }
-
 void print_FEN(const std::string &FEN)
 {
 	board b = board::from_fen(FEN);
