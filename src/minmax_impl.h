@@ -110,15 +110,15 @@ std::pair<bool, std::pair<int, board::move>> MinMax::findBestMove(board& state, 
     checkDraw = stateTable;
     mg.m_whites_turn = maximizingPlayer;
 
-    if (maxDepth == 0)
-        std::cout << "Depth = 0" << std::endl;
+    // if (maxDepth == 0)
+    //     std::cout << "Depth = 0" << std::endl;
 
-    if (checkDraw[state.to_fen()]>1){
-        std::cout << "Draw" << std::endl;
-    }
+    // if (checkDraw[state.to_fen()]>1){
+    //     std::cout << "Draw" << std::endl;
+    // }
     
-    if (mg.all_legal_moves().size() == 0)
-        std::cout << "No legal moves" << std::endl;
+    // if (mg.all_legal_moves().size() == 0)
+    //     std::cout << "No legal moves" << std::endl;
 
     if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0)
         return {false, std::make_pair(mg.evaluate(), board::move())};
@@ -264,6 +264,43 @@ long long int MinMax::getNodesAtDepth(board& state, int maxDepth, bool maximizin
 
     checkDraw[state.to_fen()]--;
     return nodes;
+}
+
+// Print board
+void print_board(const board &b)
+{
+	for (int i = 0; i < b.get_height(); i++)
+	{
+		for (int j = 0; j < b.get_width(); j++)
+			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
+		std::cout << std::endl;
+	}
+}
+
+// Play optimal moves
+void MinMax::optimalPlay(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, int total_moves) {
+	std::unordered_map<std::string, int> stateTable;
+    mg.m_whites_turn = maximizingPlayer;
+    std::cout << "Board: " << std::endl;
+    print_board(state);
+    std::cout << "FEN: " << state.to_fen() << std::endl;
+	while (total_moves--)
+	{
+        std::cout << "Player's turn: " << (mg.m_whites_turn ? "white" : "black") << std::endl;
+        std::pair<bool, std::pair<int, board::move>> best_move = findBestMove(state, maxDepth, mg.m_whites_turn, alpha_beta, stateTable);
+		std::cout << "Current evaluation: " << best_move.second.first << std::endl;
+		if (!best_move.first){
+			std::cout << state.to_fen() << std::endl;
+			std::cout << "No legal moves!" << std::endl;
+			break;
+		}
+		state.move_piece(best_move.second.second);
+		std::cout << "Board after move: " << std::endl;
+		print_board(state);
+        std::cout << "FEN: " << state.to_fen() << std::endl;
+		mg.change_turn();
+        maxDepth = std::max(maxDepth - 1, 0);
+	}
 }
 
 // Get result of the game

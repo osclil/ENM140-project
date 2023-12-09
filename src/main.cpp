@@ -7,15 +7,15 @@
 #include "move_gen.h"
 #include "minmax_impl.h"
 
-void print_board(const board &b)
-{
-	for (int i = 0; i < b.get_height(); i++)
-	{
-		for (int j = 0; j < b.get_width(); j++)
-			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
-		std::cout << std::endl;
-	}
-}
+// void print_board(const board &b)
+// {
+// 	for (int i = 0; i < b.get_height(); i++)
+// 	{
+// 		for (int j = 0; j < b.get_width(); j++)
+// 			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
+// 		std::cout << std::endl;
+// 	}
+// }
 
 void print_FEN(const std::string &FEN)
 {
@@ -94,17 +94,17 @@ int main()
 	// std::cout << mm.result(eval, depth) << std::endl;
 	// mm.clearall();
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	int eval = mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	std::cout << "Evaluation: " << eval << std::endl;
-	std::cout << mm.result(eval, depth) << std::endl;
-	std::cout << "Depth limit: " << mm.depth_limit << std::endl;
-	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
-	mm.clearall();
+	// std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	// int eval = mm.minmaxAlphaBeta(b2, depth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
+	// std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	// std::cout << "Evaluation: " << eval << std::endl;
+	// std::cout << mm.result(eval, depth) << std::endl;
+	// std::cout << "Depth limit: " << mm.depth_limit << std::endl;
+	// std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[us]" << std::endl;
+	// mm.clearall();
 
-	std::cout << "Number of nodes: " << mm.getNodes(b2, depth, true, true) << std::endl;
-	mm.clearall();
+	// std::cout << "Number of nodes: " << mm.getNodes(b2, depth, true, true) << std::endl;
+	// mm.clearall();
 
 	// auto p = mm.comparePruning(b2, depth, true);
 	// std::cout << "Time taken for simple minmax: " << p.first.count() << std::endl;
@@ -112,31 +112,14 @@ int main()
 	// std::cout << "Ratio: " << p.first.count()/p.second.count() << std::endl;
 	// mm.clearall();
 
-	auto nodes = mm.getNodesAtDepth(b2, depth, true);
-	std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
+	// auto nodes = mm.getNodesAtDepth(b2, depth, true);
+	// std::cout << "Number of nodes at depth " << depth << ": " << nodes << std::endl;
 	// if (mm.isDepthLimitReached())
 	// 	std::cout << "Depth limit reached!" << std::endl;
 	// else
 	// 	std::cout << "Depth limit not reached! All games ended before." << std::endl;
 	
-	// int i = 20;
-	// std::unordered_map<std::string, int> stateTable;
-	// while (i--)
-	// {
-	// 	mg2 = move_gen(&b2, mg2.m_whites_turn);
-	// 	std::pair<bool, std::pair<int, board::move>> best_move = mm.findBestMove(b2, depth, mg2.m_whites_turn, true, stateTable);
-	// 	std::cout << "Player's turn: " << (mg2.m_whites_turn ? "white" : "black") << std::endl;
-	// 	std::cout << "Current evaluation: " << best_move.second.first << std::endl;
-	// 	if (!best_move.first){
-	// 		std::cout << b2.to_fen() << std::endl;
-	// 		std::cout << "No legal moves!" << std::endl;
-	// 		break;
-	// 	}
-	// 	b2.move_piece(best_move.second.second);
-	// 	std::cout << "Board: " << std::endl;
-	// 	print_board(b2);
-	// 	mg2.change_turn();
-	// }
+	mm.optimalPlay(b2, depth, true, true, 100);
 
 	// Depth limit test
 	// if (mm.isDepthLimitReached())

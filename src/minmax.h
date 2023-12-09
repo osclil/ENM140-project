@@ -20,6 +20,7 @@ public:
     long long int getNodes(board &state, int maxDepth, bool maximizingPlayer, bool alpha_beta);
     long long int getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer);
     std::string result(int eval, int maxDepth);
+    void optimalPlay(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, int total_moves);
     bool isDepthLimitReached() { return depth_limit_reached; };
     void clearall() { checkDraw.clear(); depth_limit_reached = false; depth_limit = 0; };
     
