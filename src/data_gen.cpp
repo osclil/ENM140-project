@@ -20,7 +20,11 @@ void file_board(std::ofstream& outfile, board& b)
 
 int main()
 {
-    // Global variables to change as needed
+    // ---------------------------------------------------------------- //
+    // Change the following variables to test different FENs and depths //
+    // ---------------------------------------------------------------- //
+    
+    // FENs to test, change as needed
     const std::vector<std::string> FENs = {
         "k/p/P/K",
         "k/p/1/P/K",
@@ -30,32 +34,35 @@ int main()
         "k/p/1/1/1/1/1/P/K",
         "k/p/1/1/1/1/1/1/P/K",
         "k/p/1/1/1/1/1/1/1/P/K",
-        // "k/p/1/1/1/1/1/1/1/1/P/K",
-
-        // "nk/pp/PP/NK",
-        // "nk/pp/1/PP/NK",
-        // "nk/pp/1/1/PP/NK",
-
-        // "rk/pp/PP/RK",
-        // "rk/pp/1/PP/RK",
-        // "rk/pp/1/1/PP/RK",
     };
 
-    int maxDepth = 100;
+    // Max depth to search, change as needed
+    const int maxDepth = 100;
 
+    // Output filename, change as needed
     std::ofstream outfile;
     outfile.open("./data/data.csv", std::ios_base::app);
 
-    // ---------------------------------------------- //
 
-    // Stores result in the following format:
-    // FEN, Evaluation, MinMaxAlphaBeta Depth Limit, MinMaxAlphaBeta Time, MinMaxAlphaBeta Nodes, MinMaxSimple Depth Limit, MinMaxSimple Time, Total Nodes
+    // --------------------------------------------------------------- //
+    // Probably don't need to change anything below this line          //
+    // Unless you want to change the output format or something        //
+    // --------------------------------------------------------------- //   
+    // If you don't want to use OpenMP, remove the #pragma lines       //
+    // --------------------------------------------------------------- //
+    // If you don't want to run specific algorithms, comment out the   //
+    // specific 'for loops', that is everything between the headings   //
+    // --------------------------------------------------------------- //
+    // Stores result in the following format:                          //  
+    // FEN, Evaluation, MinMaxAlphaBeta Depth Limit, MinMaxAlphaBeta Time, MinMaxAlphaBeta Nodes, MinMaxSimple Depth Limit, MinMaxSimple Time, Total Nodes  //
+    // --------------------------------------------------------------- //
 
     std::unordered_map<std::string, std::vector<std::string>> output;
     for (auto FEN : FENs) output[FEN] = std::vector<std::string>({});
     outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
 
-    // ---------------------------------------------- //
+
+    // ------------------Alpha Beta------------------ //
 
     #pragma omp parallel for
     for (auto FEN : FENs){
@@ -86,6 +93,9 @@ int main()
 
     std::cout << "Alpha-beta minmax done." << std::endl;
 
+
+    // --------------------Alpha Beta Nodes-------------------- //
+
     #pragma omp parallel for
     for (auto FEN : FENs){
         board b = board::from_fen(FEN);
@@ -102,6 +112,9 @@ int main()
     }
 
     std::cout << "Alpha Beta Nodes counted." << std::endl;
+
+
+    // -------------------Minmax Simple------------------- //
 
     #pragma omp parallel for
     for (auto FEN : FENs){
@@ -130,6 +143,9 @@ int main()
 
     std::cout << "Simple minmax done." << std::endl;
 
+
+    // --------------------Minmax Simple Nodes-------------------- //
+
     #pragma omp parallel for
     for (auto FEN : FENs){
         board b = board::from_fen(FEN);
@@ -147,8 +163,10 @@ int main()
 
     std::cout << "Nodes counted." << std::endl;
 
+
     // ---------------------------------------------- //
 
+    // Final complete output
     outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
 
     for (auto FEN : FENs){
