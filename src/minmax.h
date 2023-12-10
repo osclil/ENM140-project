@@ -18,6 +18,7 @@ public:
     std::pair<bool, std::pair<int, board::move>> findBestMove(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, std::unordered_map<std::string, int>& stateTable);
     std::pair<std::chrono::duration<double>, std::chrono::duration<double>> comparePruning(board& state, int maxDepth, bool maximizingPlayer);
     long long int getNodes(board &state, int maxDepth, bool maximizingPlayer);
+    std::pair<long long int, int> getMinMaxNodes(board& state, int maxDepth, bool maximizingPlayer, int alpha, int beta, int depth);
     long long int getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer);
     std::string result(int eval, int maxDepth);
     void optimalPlay(board& state, int maxDepth, bool maximizingPlayer, bool alpha_beta, int total_moves);

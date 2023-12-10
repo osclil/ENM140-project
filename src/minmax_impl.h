@@ -230,6 +230,67 @@ long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer
     return nodes+1;
 }
 
+// Get number of minmax nodes in the game
+std::pair<long long int, int> MinMax::getMinMaxNodes(board& state, int maxDepth, bool maximizingPlayer, int alpha, int beta, int depth) {
+    checkDraw[state.to_fen()]++;
+    mg.m_whites_turn = maximizingPlayer;
+
+    if (maxDepth == 0){
+        depth_limit_reached = true;
+        checkDraw[state.to_fen()]--;
+        return {1, mg.evaluate() - depth};
+    }
+
+    if (checkDraw[state.to_fen()]>1) {
+        checkDraw[state.to_fen()]--;
+        return {0, mg.evaluate() - depth};
+    }
+
+    if (mg.all_legal_moves().size() == 0){
+        checkDraw[state.to_fen()]--;
+        return {1, mg.evaluate() - depth};
+    }
+
+    long long int nodes = 0;
+
+    if (maximizingPlayer) {
+        int maxEval = std::numeric_limits<int>::min();
+
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            std::pair<long long int, int> eval = getMinMaxNodes(state, maxDepth - 1, false, alpha, beta, depth + 1);
+            state.undo_move(move, p);
+            mg.change_turn();
+            nodes += eval.first;
+            maxEval = std::max(maxEval, eval.second);
+            alpha = std::max(alpha, eval.second);
+            if (beta <= alpha)
+                break;
+        }
+        checkDraw[state.to_fen()]--;
+        return {nodes+1, maxEval};
+    }
+    else {
+        int minEval = std::numeric_limits<int>::max();
+
+        for (board::move move : mg.all_legal_moves()) {
+            piece p = state.move_piece(move);
+            mg.change_turn();
+            std::pair<long long int, int> eval = getMinMaxNodes(state, maxDepth - 1, true, alpha, beta, depth + 1);
+            state.undo_move(move, p);
+            mg.change_turn();
+            nodes += eval.first;
+            minEval = std::min(minEval, eval.second);
+            beta = std::min(beta, eval.second);
+            if (beta <= alpha)
+                break;
+        }
+        checkDraw[state.to_fen()]--;
+        return {nodes+1, minEval};
+    }
+}
+
 // Get number of nodes at a given depth
 long long int MinMax::getNodesAtDepth(board& state, int maxDepth, bool maximizingPlayer) {
     checkDraw[state.to_fen()]++;

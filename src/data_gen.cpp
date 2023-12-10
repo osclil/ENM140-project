@@ -4,8 +4,6 @@
 #include <string>
 #include <utility>
 #include <fstream>
-#include <thread>
-#include <future>
 
 #include "move_gen.h"
 #include "minmax_impl.h"
@@ -42,7 +40,7 @@ int main()
     // ---------------------------------------------- //
 
     // Stores result in the following format:
-    // FEN, Evaluation, MinMaxAlphaBeta Depth Limit, MinMaxAlphaBeta Time, MinMaxSimple Depth Limit, MinMaxSimple Time, Total Nodes
+    // FEN, Evaluation, MinMaxAlphaBeta Depth Limit, MinMaxAlphaBeta Time, MinMaxAlphaBeta Nodes, MinMaxSimple Depth Limit, MinMaxSimple Time, Total Nodes
 
     std::unordered_map<std::string, std::vector<std::string>> output;
     for (auto FEN : FENs) output[FEN] = std::vector<std::string>({});
@@ -74,6 +72,20 @@ int main()
     }
 
     std::cout << "Alpha-beta minmax done." << std::endl;
+
+    #pragma omp parallel for
+    for (auto FEN : FENs){
+        board b = board::from_fen(FEN);
+        move_gen mg = move_gen(&b, true);
+        MinMax mm(mg);
+
+        auto nodes = mm.getMinMaxNodes(b, maxDepth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0).first;
+
+        #pragma omp critical (output)
+        output[FEN].push_back(std::to_string(nodes));
+    }
+
+    std::cout << "Alpha Beta Nodes counted." << std::endl;
 
     #pragma omp parallel for
     for (auto FEN : FENs){
@@ -116,7 +128,7 @@ int main()
 
     // ---------------------------------------------- //
 
-    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
+    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
 
     for (auto FEN : FENs){
         outfile << FEN << ',';
