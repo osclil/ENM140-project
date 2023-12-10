@@ -20,7 +20,8 @@ void file_board(std::ofstream& outfile, board& b)
 
 int main()
 {
-    std::vector<std::string> FENs = {
+    // Global variables to change as needed
+    const std::vector<std::string> FENs = {
         "k/p/P/K",
         "k/p/1/P/K",
         "k/p/1/1/P/K",
@@ -33,17 +34,47 @@ int main()
 
     int maxDepth = 100;
 
-    // open a file in write mode.
     std::ofstream outfile;
     outfile.open("./data/data.csv");
 
-    // output column names with seperator
-    outfile << "FEN,Evaluation,MinMaxSimple Depth Limit,MinMaxAlphaBeta Depth Limit,MinMaxSimple Time,MinMaxAlphaBeta Time,Total Nodes" << std::endl;
+    // ---------------------------------------------- //
+
+    // Stores result in the following format:
+    // FEN, Evaluation, MinMaxAlphaBeta Depth Limit, MinMaxAlphaBeta Time, MinMaxSimple Depth Limit, MinMaxSimple Time, Total Nodes
+
+    std::unordered_map<std::string, std::vector<std::string>> output;
+    for (auto FEN : FENs) output[FEN] = std::vector<std::string>({});
 
     // ---------------------------------------------- //
 
-    int i = 1;
-    for (auto FEN : FENs) {
+    #pragma omp parallel for
+    for (auto FEN : FENs){
+        board b = board::from_fen(FEN);
+        move_gen mg = move_gen(&b, true);
+        MinMax mm(mg);
+
+        auto alphabeta_start = std::chrono::high_resolution_clock::now();
+        int eval = mm.minmaxAlphaBeta(b, maxDepth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
+        auto alphabeta_stop = std::chrono::high_resolution_clock::now();
+        auto alphabeta_duration = std::chrono::duration_cast<std::chrono::duration<double>>(alphabeta_stop - alphabeta_start);
+        int alphabeta_depth_limit = mm.depth_limit;
+
+        #pragma omp critical (output)
+        output[FEN].push_back(std::to_string(eval));
+        output[FEN].push_back(std::to_string(alphabeta_depth_limit));
+        output[FEN].push_back(std::to_string(alphabeta_duration.count()));
+
+        if (mm.isDepthLimitReached()) {
+            std::cout << "Depth limit reached for " << FEN << " in alpha-beta minmax." << std::endl;
+            std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
+            continue;
+        }
+    }
+
+    std::cout << "Alpha-beta minmax done." << std::endl;
+
+    #pragma omp parallel for
+    for (auto FEN : FENs){
         board b = board::from_fen(FEN);
         move_gen mg = move_gen(&b, true);
         MinMax mm(mg);
@@ -53,31 +84,42 @@ int main()
         auto simple_stop = std::chrono::high_resolution_clock::now();
         auto simple_duration = std::chrono::duration_cast<std::chrono::duration<double>>(simple_stop - simple_start);
         int simple_depth_limit = mm.depth_limit;
+
+        #pragma omp critical (output)
+        output[FEN].push_back(std::to_string(simple_depth_limit));
+        output[FEN].push_back(std::to_string(simple_duration.count()));
+
         if (mm.isDepthLimitReached()) {
             std::cout << "Depth limit reached for " << FEN << " in simple minmax." << std::endl;
             std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
             continue;
         }
-        mm.clearall();
+    }
 
-        auto alphabeta_start = std::chrono::high_resolution_clock::now();
-        eval = mm.minmaxAlphaBeta(b, maxDepth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0);
-        auto alphabeta_stop = std::chrono::high_resolution_clock::now();
-        auto alphabeta_duration = std::chrono::duration_cast<std::chrono::duration<double>>(alphabeta_stop - alphabeta_start);
-        int alphabeta_depth_limit = mm.depth_limit;
-        if (mm.isDepthLimitReached()) {
-            std::cout << "Depth limit reached for " << FEN << " in alpha-beta minmax." << std::endl;
-            std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
-            continue;
-        }
-        mm.clearall();
+    std::cout << "Simple minmax done." << std::endl;
+
+    #pragma omp parallel for
+    for (auto FEN : FENs){
+        board b = board::from_fen(FEN);
+        move_gen mg = move_gen(&b, true);
+        MinMax mm(mg);
 
         auto nodes = mm.getNodes(b, maxDepth, true);
 
-        outfile << FEN << ',' << eval << ',' << simple_depth_limit << ',' << alphabeta_depth_limit << ',' << simple_duration.count() << ',' << alphabeta_duration.count() << ',' << nodes << std::endl;
+        #pragma omp critical (output)
+        output[FEN].push_back(std::to_string(nodes));
+    }
 
-        std::cout << i << " of " << FENs.size() << " done." << std::endl;
-        i++;
+    std::cout << "Nodes counted." << std::endl;
+
+    // ---------------------------------------------- //
+
+    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
+
+    for (auto FEN : FENs){
+        outfile << FEN << ',';
+        for (auto s : output[FEN]) outfile << s << ',';
+        outfile << std::endl;
     }
 
     outfile.close();
