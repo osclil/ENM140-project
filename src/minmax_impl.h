@@ -185,7 +185,7 @@ std::pair<std::chrono::duration<double>, std::chrono::duration<double>> MinMax::
 }
 
 // Get number of nodes in the game
-long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer, bool alpha_beta) {
+long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer) {
     checkDraw[state.to_fen()]++;
     mg.m_whites_turn = maximizingPlayer;
 
@@ -206,7 +206,7 @@ long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer
         for (board::move move : mg.all_legal_moves()) {
             piece p = state.move_piece(move);
             mg.change_turn();
-            nodes += getNodes(state, maxDepth - 1, false, alpha_beta);
+            nodes += getNodes(state, maxDepth - 1, false);
             state.undo_move(move, p);
             mg.change_turn();
         }
@@ -215,7 +215,7 @@ long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer
         for (board::move move : mg.all_legal_moves()) {
             piece p = state.move_piece(move);
             mg.change_turn();
-            nodes += getNodes(state, maxDepth - 1, true, alpha_beta);
+            nodes += getNodes(state, maxDepth - 1, true);
             state.undo_move(move, p);
             mg.change_turn();
         }
@@ -275,6 +275,31 @@ void print_board(const board &b)
 			std::cout << static_cast<std::uint32_t>(to_underlying(b.at(i, j))) << ' ';
 		std::cout << std::endl;
 	}
+}
+
+// Print board from FEN
+void print_FEN(const std::string &FEN)
+{
+	board b = board::from_fen(FEN);
+	print_board(b);
+}
+
+// Test board
+void test_board(const std::string &fen)
+{
+	board b = board::from_fen(fen);
+
+	std::cout << "Loaded board from FEN: " << fen << std::endl;
+
+	print_board(b);
+
+	const std::string fen_test = b.to_fen();
+	std::cout << "FEN computed from board: " << fen_test << std::endl;
+	if (fen == fen_test)
+		std::cout << "FEN checks out!" << std::endl;
+	else
+		std::cout << "FEN does not check out!" << std::endl;
+	
 }
 
 // Play optimal moves

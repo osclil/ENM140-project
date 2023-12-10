@@ -7,29 +7,6 @@
 #include "move_gen.h"
 #include "minmax_impl.h"
 
-void print_FEN(const std::string &FEN)
-{
-	board b = board::from_fen(FEN);
-	print_board(b);
-}
-
-void test_board(const std::string &fen)
-{
-	board b = board::from_fen(fen);
-
-	std::cout << "Loaded board from FEN: " << fen << std::endl;
-
-	print_board(b);
-
-	const std::string fen_test = b.to_fen();
-	std::cout << "FEN computed from board: " << fen_test << std::endl;
-	if (fen == fen_test)
-		std::cout << "FEN checks out!" << std::endl;
-	else
-		std::cout << "FEN does not check out!" << std::endl;
-	
-}
-
 int main()
 {
 	// std::string FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
