@@ -195,9 +195,14 @@ long long int MinMax::getNodes(board &state, int maxDepth, bool maximizingPlayer
         return 1;
     }
 
-    if (checkDraw[state.to_fen()]>1 || mg.all_legal_moves().size() == 0){
+    if (checkDraw[state.to_fen()]>1) {
         checkDraw[state.to_fen()]--;
         return 0;
+    }
+
+    if (mg.all_legal_moves().size() == 0){
+        checkDraw[state.to_fen()]--;
+        return 1;
     }
 
     long long int nodes = 0;
