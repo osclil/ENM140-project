@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -std=c++17 -Wall -O2 -g
+CFLAGS = -std=c++17 -Wall -O2 -g -fopenmp
 SRC = src/
 OBJ = obj/
 DATA = data/
@@ -7,8 +7,8 @@ DATA = data/
 all: main data
 
 data: $(OBJ)data_gen.o $(OBJ)move_gen.o $(OBJ)board.o
+	mkdir -p $(DATA)
 	$(CC) $(CFLAGS) $^ -o $@
-	./data
 
 main: $(OBJ)main.o $(OBJ)move_gen.o $(OBJ)board.o
 	$(CC) $(CFLAGS) $^ -o $@
