@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <thread>
+#include <future>
 
 #include "move_gen.h"
 #include "minmax_impl.h"
