@@ -242,11 +242,13 @@ std::pair<long long int, int> MinMax::getMinMaxNodes(board& state, int maxDepth,
     }
 
     if (checkDraw[state.to_fen()]>1) {
+        depth_limit = std::max(depth_limit, depth);
         checkDraw[state.to_fen()]--;
         return {0, mg.evaluate() - depth};
     }
 
     if (mg.all_legal_moves().size() == 0){
+        depth_limit = std::max(depth_limit, depth);
         checkDraw[state.to_fen()]--;
         return {1, mg.evaluate() - depth};
     }
