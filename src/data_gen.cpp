@@ -29,13 +29,22 @@ int main()
         "k/p/1/1/1/1/P/K",
         "k/p/1/1/1/1/1/P/K",
         "k/p/1/1/1/1/1/1/P/K",
-        "k/p/1/1/1/1/1/1/1/P/K"
+        "k/p/1/1/1/1/1/1/1/P/K",
+        // "k/p/1/1/1/1/1/1/1/1/P/K",
+
+        // "nk/pp/PP/NK",
+        // "nk/pp/1/PP/NK",
+        // "nk/pp/1/1/PP/NK",
+
+        // "rk/pp/PP/RK",
+        // "rk/pp/1/PP/RK",
+        // "rk/pp/1/1/PP/RK",
     };
 
     int maxDepth = 100;
 
     std::ofstream outfile;
-    outfile.open("./data/data.csv");
+    outfile.open("./data/data.csv", std::ios_base::app);
 
     // ---------------------------------------------- //
 
@@ -44,6 +53,7 @@ int main()
 
     std::unordered_map<std::string, std::vector<std::string>> output;
     for (auto FEN : FENs) output[FEN] = std::vector<std::string>({});
+    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
 
     // ---------------------------------------------- //
 
@@ -60,14 +70,17 @@ int main()
         int alphabeta_depth_limit = mm.depth_limit;
 
         #pragma omp critical (output)
-        output[FEN].push_back(std::to_string(eval));
-        output[FEN].push_back(std::to_string(alphabeta_depth_limit));
-        output[FEN].push_back(std::to_string(alphabeta_duration.count()));
+        {
+            output[FEN].push_back(std::to_string(eval));
+            output[FEN].push_back(std::to_string(alphabeta_depth_limit));
+            output[FEN].push_back(std::to_string(alphabeta_duration.count()));
 
-        if (mm.isDepthLimitReached()) {
-            std::cout << "Depth limit reached for " << FEN << " in alpha-beta minmax." << std::endl;
-            std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
-            continue;
+            outfile << FEN << ',' << eval << ',' << alphabeta_depth_limit << ',' << alphabeta_duration.count() << ',' << std::endl;
+
+            if (mm.isDepthLimitReached()) {
+                std::cout << "Depth limit reached for " << FEN << " in alpha-beta minmax." << std::endl;
+                std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
+            }
         }
     }
 
@@ -82,7 +95,10 @@ int main()
         auto nodes = mm.getMinMaxNodes(b, maxDepth, true, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 0).first;
 
         #pragma omp critical (output)
-        output[FEN].push_back(std::to_string(nodes));
+        {
+            output[FEN].push_back(std::to_string(nodes));
+            outfile << FEN << ",,,," << nodes << std::endl;
+        }
     }
 
     std::cout << "Alpha Beta Nodes counted." << std::endl;
@@ -100,13 +116,15 @@ int main()
         int simple_depth_limit = mm.depth_limit;
 
         #pragma omp critical (output)
-        output[FEN].push_back(std::to_string(simple_depth_limit));
-        output[FEN].push_back(std::to_string(simple_duration.count()));
+        {
+            output[FEN].push_back(std::to_string(simple_depth_limit));
+            output[FEN].push_back(std::to_string(simple_duration.count()));
+            outfile << FEN << ",,,,," << simple_depth_limit << ',' << simple_duration.count() << ',' << std::endl;
 
-        if (mm.isDepthLimitReached()) {
-            std::cout << "Depth limit reached for " << FEN << " in simple minmax." << std::endl;
-            std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
-            continue;
+            if (mm.isDepthLimitReached()) {
+                std::cout << "Depth limit reached for " << FEN << " in simple minmax." << std::endl;
+                std::cout << "Increase maxDepth or decrease branching factor for perfect results.";
+            }
         }
     }
 
@@ -121,7 +139,10 @@ int main()
         auto nodes = mm.getNodes(b, maxDepth, true);
 
         #pragma omp critical (output)
-        output[FEN].push_back(std::to_string(nodes));
+        {
+            output[FEN].push_back(std::to_string(nodes));
+            outfile << FEN << ",,,,,,," << nodes << std::endl;
+        }
     }
 
     std::cout << "Nodes counted." << std::endl;
