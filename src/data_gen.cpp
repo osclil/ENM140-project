@@ -23,25 +23,73 @@ int main()
     // ---------------------------------------------------------------- //
     // Change the following variables to test different FENs and depths //
     // ---------------------------------------------------------------- //
-    
+
     // FENs to test, change as needed
-    const std::vector<std::string> FENs = {
-        "k/p/P/K",
-        "k/p/1/P/K",
-        "k/p/1/1/P/K",
-        "k/p/1/1/1/P/K",
-        "k/p/1/1/1/1/P/K",
-        "k/p/1/1/1/1/1/P/K",
-        "k/p/1/1/1/1/1/1/P/K",
-        "k/p/1/1/1/1/1/1/1/P/K",
+    std::vector<std::string> FENs = {
+        // "1k/1p/2/1P/1K",
+        // "1k1/1p1/1P1/1K1",
+        // "rk/2/2/RK",
+        // "nk/2/2/NK",
+        // "bk/2/2/BK",
+        // "qk/2/2/QK",
+        // "rk1/3/RK1",
+        // "nk1/3/NK1",
+        // "bk1/3/BK1",
+        // "qk1/3/QK1",
+
+        // "rk/pp/PP/RK",
+        // "nk/pp/PP/NK",
+        // "bk/pp/PP/BK",
+        // "qk/pp/PP/QK",
+
+        // "k/p/1/1/1/1/1/1/1/1/P/K",
+        // "1k/pp/2/PP/1K",
+        // "1k/pp/2/2/PP/1K",
+        // "1k1/1p1/3/1P1/1K1",
+        // "rk/pp/2/PP/RK",
+        // "nk/pp/2/PP/NK",
+        // "bk/pp/2/PP/BK",
+        // "qk/pp/2/PP/QK",
+        // "rk/2/2/2/RK",
+        // "nk/2/2/2/NK",
+        // "bk/2/2/2/BK",
+        // "qk/2/2/2/QK",
+        // "1k/1p/2/2/1P/1K",
+        // "1k/1p/2/2/2/1P/1K",
+        // "2k1/2p1/4/2P1/2K1",
+        // "1k/pp/2/2/2/PP/1K",
+        // "rk/pp/2/2/PP/RK",
+        // "nk/pp/2/2/PP/NK",
+        // "bk/pp/2/2/PP/BK",
+        // "qk/pp/2/2/PP/QK",
+        // "rk1/3/3/RK1",
+        // "nk1/3/3/NK1",
+        // "bk1/3/3/BK1",
+        // "qk1/3/3/QK1",
+        // "rk1/pp1/PP1/RK1",
+        // "nk1/pp1/PP1/NK1",
+        // "bk1/pp1/PP1/BK1",
+        // "qk1/pp1/PP1/QK1",
+        // "rkr/ppp/PPP/RKR",
+        // "nkn/ppp/PPP/NKN",
+        // "bkb/ppp/PPP/BKB",
+        // "qkq/ppp/PPP/QKQ",
+        // "rk1/pp1/3/PP1/RK1",
+        // "nk1/pp1/3/PP1/NK1",
+        // "bk1/pp1/3/PP1/BK1",
+        // "qk1/pp1/3/PP1/QK1",
+        // "nkn/ppp/3/PPP/NKN",
+        // "rkr/ppp/3/PPP/RKR",
+        // "bkb/ppp/3/PPP/BKB",
+        // "qkq/ppp/3/PPP/QKQ",
     };
 
     // Max depth to search, change as needed
-    const int maxDepth = 100;
+    const int maxDepth = 1000;
 
     // Output filename, change as needed
     std::ofstream outfile;
-    outfile.open("./data/data.csv", std::ios_base::app);
+    outfile.open("./data/all.csv", std::ios_base::app);
 
 
     // --------------------------------------------------------------- //
@@ -59,7 +107,7 @@ int main()
 
     std::unordered_map<std::string, std::vector<std::string>> output;
     for (auto FEN : FENs) output[FEN] = std::vector<std::string>({});
-    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
+    // outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes," << std::endl;
 
 
     // ------------------Alpha Beta------------------ //
@@ -167,7 +215,7 @@ int main()
     // ---------------------------------------------- //
 
     // Final complete output
-    outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes" << std::endl;
+    // outfile << "FEN,Evaluation,MinMaxAlphaBeta Depth Limit,MinMaxAlphaBeta Time,MinMaxAlphaBeta Nodes,MinMaxSimple Depth Limit,MinMaxSimple Time,Total Nodes," << std::endl;
 
     for (auto FEN : FENs){
         outfile << FEN << ',';
