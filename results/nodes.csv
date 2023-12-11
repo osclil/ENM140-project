@@ -1,4 +1,4 @@
-FEN, nodes_at_depth_2, nodes_at_depth_4, nodes_at_depth_6, nodes_at_depth_8, nodes_at_depth_10, nodes_at_depth_12, nodes_at_depth_14, nodes_at_depth_16
+FEN,nodes_at_depth_2,nodes_at_depth_4,nodes_at_depth_6,nodes_at_depth_8,nodes_at_depth_10,nodes_at_depth_12,nodes_at_depth_14,nodes_at_depth_16
 1k/1p/1P/1K,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
 1k/1p/2/1P/1K,7.0,50.0,172.0,430.0,1213.0,4688.0,26126.0,174393.0
 1k/1p/2/2/1P/1K,9.0,118.0,1113.0,9292.0,65601.0,425030.0,0.0,0.0
